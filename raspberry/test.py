@@ -60,9 +60,11 @@ class PyQtLayout(QWidget):
 def producer(id):
     bus = can.Bus(channel=channel, interface=interface)
     for i in range(1):
-        temp = binascii.unhexlify('4142434445464748')
+        temp = binascii.unhexlify('2310100100010010')
+        data_send = [23, 10, 10, 1, 10, 0, 10, 0]
+        bytes_array = bytearray(b'\x23\x10\x10\x00\x40\x01\x10\x01')
         msg = can.Message(arbitration_id=0xc0ffee,
-                          data=temp,
+                          data=bytes_array,
                           is_extended_id=False)
         bus.send(msg)
         led.on()
