@@ -9,8 +9,9 @@ channel = 'can0'
 led = LED(21)
 
 
-motor = [23, 10, 10, 0, 100, 100]
-program = [34, 10, 10, 0, 100, 100, 0, 0]
+motor = [23, 10, 10, 0, 10, 10]
+program = [34, 0, 0, 0, 0, 0, 0, 0]
+emergency = [99, 0, 0, 0, 0, 0, 0, 0]
 
 def speed(_str, val):
         if _str == "+":
@@ -51,41 +52,53 @@ def producer(_str):
             print ("CV")
             #change direction
             direction("CV")
-            packed_data = ps.parse(motor)
+            packed_data = ps.pack(motor)
             
         case "CCV_dir":
             print ("CCV")
             #change direction
             direction("CCV")
-            packed_data = ps.parse(motor)
+            packed_data = ps.pack(motor)
             
         case "spd_more":
             print ("SPD +")
             #add speed
-            speed("+", 100)
-            packed_data = ps.parse(motor)
+            speed("+", 10)
+            packed_data = ps.pack(motor)
             
         case "spd_less":
             print ("SPD -")
             #minus speed
-            speed("-", 100)
-            packed_data = ps.parse(motor)
+            speed("-", 10)
+            packed_data = ps.pack(motor)
             
         case "stp_more":
             print ("STEP +")
-            step("+", 100)
-            packed_data = ps.parse(motor)
+            #add step
+            step("+", 10)
+            packed_data = ps.pack(motor)
             
         case "stp_less":
             print ("STEP -")
-            step("-", 100)
-            packed_data = ps.parse(motor)
+            #minus step
+            step("-", 10)
+            packed_data = ps.pack(motor)
+            
+        case "boot":
+            print ("Boot")
+            #boot program
+            packed_data = ps.pack(program)
+            
+        case "stop":
+            print ("Stop")
+            #stop motor
+            packed_data = ps.pack(emergency)
             
         case _:
             print ("None")
     
     
-    print ("data:", packed_data)
+    print ("data out:", packed_data)
     msg = can.Message(arbitration_id=0xc0ffee,
                       data=packed_data,
                       is_extended_id=False)
