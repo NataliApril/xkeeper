@@ -10,9 +10,9 @@ class PyQtLayout(QWidget):
         super().__init__()
         self.UI()
 
-    def click(msg_type, self):
+    def click(_str, self):
         print ("Clicked")
-        ds.producer(msg_type)
+        ds.producer(_str)
  
     def UI(self):
         
@@ -24,9 +24,9 @@ class PyQtLayout(QWidget):
         '''direction control'''
         Label2 = QLabel("Direction:")
         Button_dir1 = QPushButton('CV')
-        Button_dir1.clicked.connect(self.click('dir'))
+        Button_dir1.clicked.connect(lambda: self.click('dir'))
         Button_dir2 = QPushButton('CCV')
-        Button_dir2.clicked.connect(self.click('dir'))     
+        Button_dir2.clicked.connect(lambda: self.click('dir'))     
 
         '''steps control'''
         Label3 = QLabel("Step:")
