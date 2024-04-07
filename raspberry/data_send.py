@@ -23,8 +23,26 @@ def speed(_str, val):
                 motor[4] -= val
             else:
                 motor[4] -= 0
+                
+def direction(_str):
+        if _str == "CV":
+            motor[3] = 0
+        elif _str == "CCV":
+            motor[3] = 1
+            
+def step(_str, val):
+        if _str == "+":
+            if (0 <= motor[5] < 65535):
+                motor[5] += val
+            else:
+                motor[5] += 0
+        elif _str == "-":
+            if (0 < motor[5] <= 65535):
+                motor[5] -= val
+            else:
+                motor[5] -= 0
         
-    
+        
 def producer(_str):
     bus = can.Bus(channel=channel, interface=interface)
     
@@ -32,13 +50,13 @@ def producer(_str):
         case "CV_dir":
             print ("CV")
             #change direction
-            motor[3] = 0
+            direction("CV")
             packed_data = ps.parse(motor)
             
         case "CCV_dir":
             print ("CCV")
             #change direction
-            motor[3] = 1
+            direction("CCV")
             packed_data = ps.parse(motor)
             
         case "spd_more":
@@ -55,9 +73,13 @@ def producer(_str):
             
         case "stp_more":
             print ("STEP +")
+            step("+", 100)
+            packed_data = ps.parse(motor)
             
         case "stp_less":
             print ("STEP -")
+            step("-", 100)
+            packed_data = ps.parse(motor)
             
         case _:
             print ("None")
@@ -68,11 +90,9 @@ def producer(_str):
                       data=packed_data,
                       is_extended_id=False)
     bus.send(msg)
-    led.on()
+    '''led.on()
     time.sleep(0.1)     
     led.off()
     time.sleep(0.1)
-
-
-    time.sleep(1)
+    time.sleep(1)'''
 

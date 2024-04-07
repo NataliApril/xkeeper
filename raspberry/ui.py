@@ -35,7 +35,7 @@ class PyQtLayout(QWidget):
         Button_step1 = QPushButton('+')
         Button_step1.clicked.connect(lambda: self.click("stp_more"))
         Button_step2 = QPushButton('-')   
-        Button_step2.clicked.connect(lambda: self.click("spd_less")) 
+        Button_step2.clicked.connect(lambda: self.click("stp_less")) 
         
         '''UI''' 
         widget = QGridLayout()
