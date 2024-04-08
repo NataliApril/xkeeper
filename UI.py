@@ -11,40 +11,51 @@ class Window(QDialog):
         self.originalPalette = QApplication.palette() 
         self.setWindowTitle("Device Cheak:")
         self.setGeometry(400, 200, 1000, 600)
+        
+        self.TableServiceList()  
+
+        self.UI = QTabWidget()
+        self.UI.setSizePolicy(QSizePolicy.Policy.Preferred,
+                QSizePolicy.Policy.Ignored)
+        tableWidget = QTableWidget(10, 10)
+
+
+        tab1 = QWidget()
+        # tab1grid = QVBoxLayout()
+        # tab1grid.addWidget(self.ServiceList)
+        # tab1.setLayout(tab1grid)
+        tab1hbox = QHBoxLayout()
+        tab1hbox.setContentsMargins(5, 5, 5, 5)
+        tab1hbox.addWidget(tableWidget)
+        tab1.setLayout(tab1hbox)
+        
+
+        # Service = QVBoxLayout()
+        # Service.addWidget(self.ServiceList)
+        # self.setLayout(Service)
+
+        tab2 = QWidget()
+        tab2hbox = QHBoxLayout()
+        tab2hbox.setContentsMargins(5, 5, 5, 5)
+        tab2hbox.addWidget(tableWidget)
+        tab2.setLayout(tab2hbox)
+
+
+        self.UI.addTab(tab1, "Devices")
+        self.UI.addTab(tab2, "Service")
+    
+    def TableServiceList(self):
+        self.ServiceList = QGroupBox()
 
         self.SpeedStatus()
         self.DirectionStatus()
         self.StepStatus()
 
-        mainLayout = QVBoxLayout()
-        mainLayout.addWidget(self.Step)
-        mainLayout.addWidget(self.Direction)
-        mainLayout.addWidget(self.Speed)
-        # mainLayout.rowCount(3)
-        # mainLayout.setRowStretch(3, 1)
-        # mainLayout.setColumnStretch(0, 1)
-        # mainLayout.setColumnStretch(1, 1)
-        self.setLayout(mainLayout)
-        
-        
-    
-        # self.Speed = QTabWidget()
-        # self.Speed.setSizePolicy(QSizePolicy.Policy.Preferred,
-        #         QSizePolicy.Policy.Ignored)
-
-        # tab1 = QWidget()
-        # tableWidget1 = QTableWidget(2, 4)
-        # tableWidget2 = QLabel("Test")
-
-        # tab1grid = QGridLayout()
-        # tab1grid.setContentsMargins(5, 5, 5, 5)
-        # tab1grid.addWidget(tableWidget1)
-        # tab1grid.addWidget(tableWidget1)
-        # tab1grid.addWidget(tableWidget2)
-        # tab1.setLayout(tab1grid)
-
-        # self.Speed.addTab(tab1, "Devices")
-        # self.Speed.addTab(tab2, "Service")
+        ServiceTab = QVBoxLayout()
+        ServiceTab.addWidget(self.Step)
+        ServiceTab.addWidget(self.Direction)
+        ServiceTab.addWidget(self.Speed)
+        self.ServiceList.setLayout(ServiceTab)
 
     def SpeedStatus(self):
         self.Speed = QGroupBox()
