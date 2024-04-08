@@ -12,6 +12,8 @@ motor = [23, 10, 10, 0, 0, 0]
 start_run = [88, 0, 0, 0, 0, 0] 
 start_move = [89, 0, 0, 0, 0, 0] 
 stop = [99, 0, 0, 0, 0, 0]
+
+programming = [101, 0, 0, 0, 0, 0]
         
 def producer(_str):
     bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
@@ -24,6 +26,8 @@ def producer(_str):
             packed_data = ps.pack(start_move)
         case "stop":
             packed_data = ps.pack(stop)
+        case "programm":
+            packed_data = ps.pack(programming)
             
     print ("data out:", packed_data)
     msg = can.Message(arbitration_id=0xc0ffee,

@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import data_send as ds
+import time
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -228,6 +229,8 @@ class Ui_MainWindow(object):
         self.startButton.clicked.connect(lambda: ds.producer("start_run"))
         self.startButton_2.clicked.connect(lambda: ds.producer("start_move"))
         self.stepButton.clicked.connect(lambda: ds.producer("stop"))
+        self.programming.clicked.connect(lambda: ds.producer("programm"))
+        self.programming.clicked.connect(lambda: self.detect())
         self.Step_slider.sliderMoved.connect(lambda: self.update_data("step"))
         self.Speed_slider.sliderMoved.connect(lambda: self.update_data("speed"))
         self.ACC_slider.sliderMoved.connect(lambda: self.update_data("acc"))
@@ -267,11 +270,11 @@ class Ui_MainWindow(object):
         #self.dec_val.setText(_translate("MainWindow", "DEC val:  0"))
         #self.speed_val.setText(_translate("MainWindow", "Speed val:  0"))
         #self.step_val.setText(_translate("MainWindow", "Step val:  0"))
-        self.direction_val.setText(_translate("MainWindow", "Direction:  CV"))
+        #self.direction_val.setText(_translate("MainWindow", "Direction:  CV"))
         self.programming.setText(_translate("MainWindow", "Strat programming"))
-        self.started.setText(_translate("MainWindow", "Started"))
-        self.sucsess.setText(_translate("MainWindow", "Sucsess"))
-        self.error.setText(_translate("MainWindow", "Error"))
+        #self.started.setText(_translate("MainWindow", "Started"))
+        #self.sucsess.setText(_translate("MainWindow", "Sucsess"))
+        #self.error.setText(_translate("MainWindow", "Error"))
         self.Devices.setTabText(self.Devices.indexOf(self.tab_2), _translate("MainWindow", "Service"))
 
 
@@ -305,3 +308,8 @@ class Ui_MainWindow(object):
                 if self.radioButton_2.isChecked():
                     self.direction_val.setText("Direction: CCV")
                     ds.motor[3] = 1
+                    
+    
+    def detect(self):
+        self.started.setText("Started")
+
