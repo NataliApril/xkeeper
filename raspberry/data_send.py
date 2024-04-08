@@ -45,7 +45,7 @@ def step(_str, val):
         
         
 def producer(_str):
-    bus = can.Bus(channel=channel, interface=interface)
+    bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
     
     match _str:
         case "CV_dir":

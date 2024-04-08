@@ -1,55 +1,65 @@
 import can
 import asyncio
 import queue
+import time
+import threading
 
 interface = 'socketcan'
 channel = 'can0'
+
+q = queue.Queue()
 
 #bus = can.Bus(channel=channel, interface=interface)
 #buffered_reader = can.BufferedReader()
 #notifier = can.Notifier(bus, [buffered_reader])
 
+'''def print_message (msg: can.Message) -> None:
+    print (msg)'''
 
-def take_data():
-    bus = can.Bus(channel=channel, interface=interface)
-    notifier = can.Notifier(bus, [can.Printer()])
-    if (can.BufferedReader() != None):
-        #buffer = can.get_message()
-        #print (buffer)
-        #buffer = can.BufferedReader()
-        #msg = buffer.get_message()s
-        #print (msg)
-        print ("Done!")
-    else:
-        print ("Error")
+def put_data():
+    bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
+    
+    for msg in bus:
+        print ("data in: ", msg.data)
+    
+    #reader = can.BufferedReader()   
+    #notifier = can.Notifier(bus, [reader])
+    #q.put(reader.get_message())
+    #print ("data in: ", reader.get_message())
+    #time.sleep(1)
+    
+'''def get_data():
+    if (q.empty() != True):
+        temp = q.get_nowait()
+        print (temp)
+    
+threading.Thread(target=put_data, daemon=True).start()
+
+
+    
         
-        
-   
-   
-'''def rx_thread (self):
-    msg = bus.recv(timeout=None)
-    can.BufferedReader.on_message_received(msg)
+reader = can.AsyncBufferedReader()
+    listeners: List[MessageRecipient] = [print_message, reader]
     
-    
-def take_data(self):
-    while True:
-        try:
-            msg = can.BufferedReader.get_message(self, timeout=0.5)
-            buffered_reader.on_message_received(msg)
-            print (msg)
-        except queue.Empty:
-            break
-        
-        
-        
-    msg = can.Message(arbitration_id = 0x0378, data=[0x00], is_extended_id=False)
-    msg = buffer.on_message_received()
-    print ("data in:", msg)
-    return msg'''
+    loop = asyncio.get_running_loop()
+    notifier = can.Notifier(bus, listeners, loop=loop)
+    msg = await reader.get_message()'''
+    #print (msg)
     
     
     
+    #buffered_reader = can.BufferedReader()
     
-    #async for msg in notof
+    #notifier = can.Notifier(bus, [buffered_reader])
+    
+    #msg = bus.recv(None)
+    
+    #print (msg)
+    #buffered_reader.on_message_received(msg)
+    #notifier = can.Notifier(bus, [can.Printer()])
+    #msg = bus.recv()
+    
+    #print ("data in: ", buffered_reader.get_message(timeout=0.1))
+
     
     

@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QPushButton, QApplication, 
                              QHBoxLayout, QVBoxLayout, QGridLayout, 
                              QLabel, QGroupBox)
-from PyQt5.QtCore import QCoreApplication, Qt
+from PyQt5.QtCore import QCoreApplication, Qt, QThread
 import data_send as ds
                              
 class PyQtLayout(QWidget):
@@ -11,7 +11,7 @@ class PyQtLayout(QWidget):
         self.UI()
 
     def click(self, _str):
-        print ("Clicked")
+        #print ("Clicked")
         ds.producer(_str)
  
     def UI(self):
