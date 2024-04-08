@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'test_2.ui'
+# Form implementation generated from reading ui file 'test_3.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -12,6 +12,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_MainWindow(object):
+    
+        
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -19,6 +21,9 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.ServiceWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.ServiceWidget.setGeometry(QtCore.QRect(10, 10, 781, 551))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.ServiceWidget.setFont(font)
         self.ServiceWidget.setObjectName("ServiceWidget")
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
@@ -40,8 +45,12 @@ class Ui_MainWindow(object):
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
         self.Step_slider = QtWidgets.QSlider(self.widget)
+        self.Step_slider.setProperty("value", 35)
         self.Step_slider.setOrientation(QtCore.Qt.Horizontal)
         self.Step_slider.setObjectName("Step_slider")
+        
+        self.Step_slider.sliderMoved.connect(lambda: self.update_data("step"))
+        
         self.gridLayout.addWidget(self.Step_slider, 1, 1, 1, 2)
         self.label_3 = QtWidgets.QLabel(self.widget)
         font = QtGui.QFont()
@@ -50,14 +59,25 @@ class Ui_MainWindow(object):
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
         self.Speed_slider = QtWidgets.QSlider(self.widget)
+        self.Speed_slider.setProperty("value", 25)
         self.Speed_slider.setOrientation(QtCore.Qt.Horizontal)
         self.Speed_slider.setObjectName("Speed_slider")
+        
+        self.Speed_slider.sliderMoved.connect(lambda: self.update_data("speed"))
+        
         self.gridLayout.addWidget(self.Speed_slider, 0, 1, 1, 2)
         self.radioButton = QtWidgets.QRadioButton(self.widget)
+        self.radioButton.setChecked(True)
         self.radioButton.setObjectName("radioButton")
+        
+        self.radioButton.clicked.connect(lambda: self.cheak_direction("CV"))
+        
         self.gridLayout.addWidget(self.radioButton, 2, 1, 1, 1)
         self.radioButton_2 = QtWidgets.QRadioButton(self.widget)
         self.radioButton_2.setObjectName("radioButton_2")
+        
+        self.radioButton_2.clicked.connect(lambda: self.cheak_direction("CCV"))
+        
         self.gridLayout.addWidget(self.radioButton_2, 2, 2, 1, 1)
         self.label = QtWidgets.QLabel(self.widget)
         font = QtGui.QFont()
@@ -68,42 +88,6 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addLayout(self.gridLayout, 0, 0, 1, 1)
         self.gridLayout_2 = QtWidgets.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.label_5 = QtWidgets.QLabel(self.widget)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_5.setFont(font)
-        self.label_5.setObjectName("label_5")
-        self.gridLayout_2.addWidget(self.label_5, 1, 0, 1, 1)
-        self.label_8 = QtWidgets.QLabel(self.widget)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_8.setFont(font)
-        self.label_8.setObjectName("label_8")
-        self.gridLayout_2.addWidget(self.label_8, 1, 1, 1, 1)
-        self.label_6 = QtWidgets.QLabel(self.widget)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_6.setFont(font)
-        self.label_6.setObjectName("label_6")
-        self.gridLayout_2.addWidget(self.label_6, 2, 0, 1, 1)
-        self.label_9 = QtWidgets.QLabel(self.widget)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_9.setFont(font)
-        self.label_9.setObjectName("label_9")
-        self.gridLayout_2.addWidget(self.label_9, 2, 1, 1, 1)
-        self.label_7 = QtWidgets.QLabel(self.widget)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_7.setFont(font)
-        self.label_7.setObjectName("label_7")
-        self.gridLayout_2.addWidget(self.label_7, 3, 0, 1, 1)
-        self.label_10 = QtWidgets.QLabel(self.widget)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.label_10.setFont(font)
-        self.label_10.setObjectName("label_10")
-        self.gridLayout_2.addWidget(self.label_10, 3, 1, 1, 1)
         self.label_4 = QtWidgets.QLabel(self.widget)
         font = QtGui.QFont()
         font.setPointSize(12)
@@ -111,6 +95,32 @@ class Ui_MainWindow(object):
         self.label_4.setToolTipDuration(5)
         self.label_4.setObjectName("label_4")
         self.gridLayout_2.addWidget(self.label_4, 0, 0, 1, 2)
+        self.label_5 = QtWidgets.QLabel(self.widget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_5.setFont(font)
+        self.label_5.setObjectName("label_5")
+        
+        value =  self.Speed_slider.value()
+        self.label_5.setText("Speed val: " + str(value))
+        
+        self.gridLayout_2.addWidget(self.label_5, 1, 0, 1, 2)
+        self.label_6 = QtWidgets.QLabel(self.widget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_6.setFont(font)
+        self.label_6.setObjectName("label_6")
+        
+        value =  self.Step_slider.value()
+        self.label_6.setText("Step val: " + str(value))
+        
+        self.gridLayout_2.addWidget(self.label_6, 2, 0, 1, 2)
+        self.label_7 = QtWidgets.QLabel(self.widget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_7.setFont(font)
+        self.label_7.setObjectName("label_7")
+        self.gridLayout_2.addWidget(self.label_7, 3, 0, 1, 2)
         self.gridLayout_3.addLayout(self.gridLayout_2, 0, 1, 1, 1)
         self.pushButton = QtWidgets.QPushButton(self.widget)
         font = QtGui.QFont()
@@ -133,6 +143,12 @@ class Ui_MainWindow(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        
+        
+        if self.radioButton.isChecked():
+            self.label_7.setText("Direction: CV")
+        else:
+            self.label_7.setText("Direction: CCV")
 
         self.retranslateUi(MainWindow)
         self.ServiceWidget.setCurrentIndex(1)
@@ -147,23 +163,31 @@ class Ui_MainWindow(object):
         self.radioButton.setText(_translate("MainWindow", "CV"))
         self.radioButton_2.setText(_translate("MainWindow", "CCV"))
         self.label.setText(_translate("MainWindow", "Speed"))
-        self.label_5.setText(_translate("MainWindow", "Speed val"))
-        self.label_8.setText(_translate("MainWindow", "0"))
-        self.label_6.setText(_translate("MainWindow", "Step val"))
-        self.label_9.setText(_translate("MainWindow", "0"))
-        self.label_7.setText(_translate("MainWindow", "Direction"))
-        self.label_10.setText(_translate("MainWindow", "0"))
         self.label_4.setText(_translate("MainWindow", "Current value"))
+        #self.label_5.setText(_translate("MainWindow", "Speed val:  0"))
+        #self.label_6.setText(_translate("MainWindow", "Step val:  0"))
+        #self.label_7.setText(_translate("MainWindow", "Direction:  CV"))
         self.pushButton.setText(_translate("MainWindow", "Send"))
         self.pushButton_2.setText(_translate("MainWindow", "Start"))
         self.ServiceWidget.setTabText(self.ServiceWidget.indexOf(self.tab_2), _translate("MainWindow", "Service"))
 
+    def update_data(self, _str):
+        match _str:
+            case "speed":
+                value_spd =  self.Speed_slider.value()
+                self.label_5 .setText("Speed val: " + str(value_spd))
+            case "step":
+                value_stp =  self.Step_slider.value()
+                self.label_6 .setText("Step val: " + str(value_stp))
+                
+    def cheak_direction(self, _str):
+        match _str:
+            case "CV":
+                if self.radioButton.isChecked():
+                    self.label_7.setText("Direction: CV")
+                                    
+            case "CCV":
+                if self.radioButton_2.isChecked():
+                    self.label_7.setText("Direction: CCV")
+                
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
