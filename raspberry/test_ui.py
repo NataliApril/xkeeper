@@ -15,7 +15,7 @@ class Ui_MainWindow(object):
     
         
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
+        MainWindow.setObjectName("Divice cheak")
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -156,7 +156,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Divice cheak"))
         self.ServiceWidget.setTabText(self.ServiceWidget.indexOf(self.tab), _translate("MainWindow", "Devices"))
         self.label_2.setText(_translate("MainWindow", "Step"))
         self.label_3.setText(_translate("MainWindow", "Direction"))
