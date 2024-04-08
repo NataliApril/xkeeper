@@ -139,7 +139,9 @@ class Ui_MainWindow(object):
         self.label_6.setText("Step val: " + str(value))
         ds.motor[5] = value
         
-        self.pushButton.clicked.connect(lambda: ds.producer())
+        self.pushButton.clicked.connect(lambda: ds.producer("motor"))
+        self.pushButton_2.clicked.connect(lambda: ds.producer("start"))
+        self.pushButton_3.clicked.connect(lambda: ds.producer("stop"))
         self.Step_slider.sliderMoved.connect(lambda: self.update_data("step"))
         self.Speed_slider.sliderMoved.connect(lambda: self.update_data("speed"))
         self.radioButton.clicked.connect(lambda: self.cheak_direction("CV"))
