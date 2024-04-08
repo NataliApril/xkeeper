@@ -1,4 +1,4 @@
-import test_ui2 as uiii
+import test_ui5 as uiii
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 if __name__ == "__main__":
