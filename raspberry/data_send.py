@@ -9,7 +9,8 @@ channel = 'can0'
 led = LED(21)
 
 motor = [23, 10, 10, 0, 0, 0] 
-start = [89, 0, 0, 0, 0, 0] 
+start_run = [88, 0, 0, 0, 0, 0] 
+start_move = [89, 0, 0, 0, 0, 0] 
 stop = [99, 0, 0, 0, 0, 0]
         
 def producer(_str):
@@ -17,8 +18,10 @@ def producer(_str):
     match _str:
         case "motor":
             packed_data = ps.pack(motor)
-        case "start":
-            packed_data = ps.pack(start)
+        case "start_run":
+            packed_data = ps.pack(start_run)
+        case "start_move":
+            packed_data = ps.pack(start_move)
         case "stop":
             packed_data = ps.pack(stop)
             
