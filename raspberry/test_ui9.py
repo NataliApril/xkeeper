@@ -13,6 +13,9 @@ import data_send as ds
 import data_take as dt
 import time
 from threading import *
+import queue 
+
+#q = queue.Queue()
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -233,7 +236,7 @@ class Ui_MainWindow(object):
         self.stepButton.clicked.connect(lambda: ds.producer("stop"))
         self.programming.clicked.connect(lambda: ds.producer("programm"))
         
-        self.programming.clicked.connect(lambda: self.thread())
+        #self.programming.clicked.connect(lambda: self.thread(q))
         
         self.programming.clicked.connect(lambda: self.detect())
         self.Step_slider.sliderMoved.connect(lambda: self.update_data("step"))
@@ -318,13 +321,17 @@ class Ui_MainWindow(object):
                     self.direction_val.setText("Direction: CCV")
                     ds.motor[3] = 1
                     
-                    
-    
     def detect(self):
         self.started.setText("Started")
         
-    def thread (self):
-        t1= Thread(target = dt.put_data)
+        
+    def thread (self, q):
+        t1= Thread(target = dt.put_data, args=[q])
         t1.start()
+        #t1.join()
+        #for elem in q:
+        print("size:", q.qsize())
+        print("data in:", q.get(self))
+            #print("data in:", elem)
 
 
