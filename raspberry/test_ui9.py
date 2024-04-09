@@ -325,13 +325,6 @@ class Ui_MainWindow(object):
         self.started.setText("Started")
         
         
-    def thread (self, q):
-        t1= Thread(target = dt.put_data, args=[q])
-        t1.start()
-        #t1.join()
-        #for elem in q:
-        print("size:", q.qsize())
-        print("data in:", q.get(self))
-            #print("data in:", elem)
+
 
 

@@ -6,14 +6,29 @@ import queue
 interface = 'socketcan'
 channel = 'can0'
 
-def put_data(q):
-    bus = can.ThreadSafeBus(channel=channel, interface=interface, bitrate = 125000)
+def print_data(msg):
+    print ("data in:", msg.data)
     
-    message = bus.recv(1)
-    q.put(message)
-    #for msg in bus:
-        #q.put(msg.data)
+def put_data(q):
+    bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
+    message = bus.recv()
+    q.put(message.data)
+    print ("size: ", q.qsize())
+    print ("data: ", message.data)
+    q.get()
 
+def take():
+    bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
+    reader = can.BufferedReader()
+    bus_notifier = can.Notifier(bus, [reader]) 
+    messages = []
+    msg = reader.get_message(1)
+    if msg is None:
+        #break
+        print("None")
+    messages.append(msg)
+    print ("data in take: ", msg.data)
+    
     
 
 
