@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 
 
 class _Bar(QtWidgets.QWidget):
-    pass
+    # pass
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -45,7 +45,7 @@ class _Bar(QtWidgets.QWidget):
         pc = (value - vmin) / (vmax - vmin)
         n_steps_to_draw = int(pc * 5)
         brush.setColor(QtGui.QColor('red'))
-        print (brush)
+        # print (brush)
         for n in range(n_steps_to_draw):
             rect = QtCore.QRect(
                 int(padding),

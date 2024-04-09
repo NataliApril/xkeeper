@@ -1,3 +1,4 @@
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QDateTime, Qt, QTimer
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QCheckBox, QComboBox, QDateTimeEdit,
         QDial, QDialog, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit,
@@ -19,10 +20,13 @@ class App(QMainWindow):
         self.table_widget = ServiceList(self)
         self.setCentralWidget(self.table_widget)
 
+
+        
+
 class ServiceList(QWidget):
     
-    def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
+    def __init__(self, *args, **kwargs):
+        super(QWidget, self).__init__(*args, **kwargs)
         self.layout = QVBoxLayout(self)
         self.tabs = QTabWidget()
         self.tab1 = QWidget()
@@ -88,16 +92,19 @@ class ServiceList(QWidget):
         layout_stp.addWidget(curr_stp_val)
         self.Step.setLayout(layout_stp)
 
-    def Device (self, id, status):
-        print ("test")
+class Device(QtWidgets.QWidget):
 
+    def __init__(self, *args, **kwargs):
+        super(Device, self).__init__(*args, **kwargs)
 
-# class DeviceCheak(QWidget):
-    
-#     def __init__(self, parent):
-#         super(QWidget, self).__init__(parent)
-
-        
+    def printDevice(self, id):
+        painter = QtGui.QPainter(self.label.pixmap())
+        pen = QtGui.QPen()
+        pen.setWidth(40)
+        pen.setColor(QtGui.QColor('red'))
+        painter.setPen(pen)
+        painter.drawPoint(200, 150)
+        painter.end()
        
 
 if __name__ == '__main__':

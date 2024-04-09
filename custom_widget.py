@@ -29,7 +29,7 @@ class _Bar(QtWidgets.QWidget):
             raise TypeError('steps must be a list or int')
 
         self._bar_solid_percent = 0.8
-        self._background_color = QtGui.QColor('red')
+        self._background_color = QtGui.QColor('black')
         self._padding = 4.0  # n-pixel gap around edge.
 
     def paintEvent(self, e):
