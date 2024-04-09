@@ -11,6 +11,17 @@ def pack(list):
 	packed_data = struct.pack(format_string, *list)
 	return packed_data
 
-def parse():
-	
-	return 0
+def parse(data):
+	if data[0] == 23:
+		print ("motor")
+	elif data[0] == 88:
+		print ("move")
+	elif data[0] == 89:
+		print("run")
+	elif data[0] == 99:
+		print("stop")
+	elif data[0] == 101:
+		print ("programming")
+	else:
+		print ("unknown")
+	#return 0

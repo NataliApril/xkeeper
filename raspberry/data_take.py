@@ -1,6 +1,7 @@
 import can
 import time
 import queue
+import parser as pars
 
 
 interface = 'socketcan'
@@ -15,7 +16,7 @@ def put_data(q):
     q.put(message.data)
     print ("size: ", q.qsize())
     print ("data: ", message.data)
-    q.get()
+    pars.parse(q.get())
 
 def take():
     bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
