@@ -1,13 +1,11 @@
 import can
-import asyncio
-import queue
 import time
-import threading
+
 
 interface = 'socketcan'
 channel = 'can0'
 
-q = queue.Queue()
+
 
 #bus = can.Bus(channel=channel, interface=interface)
 #buffered_reader = can.BufferedReader()
@@ -17,8 +15,8 @@ q = queue.Queue()
     print (msg)'''
 
 def put_data():
-    bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
-    
+    bus = can.ThreadSafeBus(channel=channel, interface=interface, bitrate = 125000)
+    time.sleep(1)
     for msg in bus:
         print ("data in: ", msg.data)
     

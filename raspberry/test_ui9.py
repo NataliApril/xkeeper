@@ -10,7 +10,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import data_send as ds
+import data_take as dt
 import time
+from threading import *
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -230,6 +232,9 @@ class Ui_MainWindow(object):
         self.startButton_2.clicked.connect(lambda: ds.producer("start_move"))
         self.stepButton.clicked.connect(lambda: ds.producer("stop"))
         self.programming.clicked.connect(lambda: ds.producer("programm"))
+        
+        self.programming.clicked.connect(lambda: self.thread())
+        
         self.programming.clicked.connect(lambda: self.detect())
         self.Step_slider.sliderMoved.connect(lambda: self.update_data("step"))
         self.Speed_slider.sliderMoved.connect(lambda: self.update_data("speed"))
@@ -248,6 +253,8 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.Devices.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        
+        
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -278,6 +285,7 @@ class Ui_MainWindow(object):
         self.Devices.setTabText(self.Devices.indexOf(self.tab_2), _translate("MainWindow", "Service"))
 
 
+
     def update_data(self, _str):
         match _str:
             case "speed":
@@ -297,6 +305,7 @@ class Ui_MainWindow(object):
                 self.dec_val.setText("DEC val: " + str(value_dec))
                 ds.motor[2] = value_dec
                 
+                
     def cheak_direction(self, _str):
         match _str:
             case "CV":
@@ -309,7 +318,13 @@ class Ui_MainWindow(object):
                     self.direction_val.setText("Direction: CCV")
                     ds.motor[3] = 1
                     
+                    
     
     def detect(self):
         self.started.setText("Started")
+        
+    def thread (self):
+        t1= Thread(target = dt.put_data)
+        t1.start()
+
 
