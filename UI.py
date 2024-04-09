@@ -1,49 +1,60 @@
 from PyQt5.QtCore import QDateTime, Qt, QTimer
-from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QDateTimeEdit,
+from PyQt5.QtWidgets import (QMainWindow, QApplication, QCheckBox, QComboBox, QDateTimeEdit,
         QDial, QDialog, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit,
         QProgressBar, QPushButton, QRadioButton, QScrollBar, QSizePolicy,
         QSlider, QSpinBox, QStyleFactory, QTableWidget, QTabWidget, QTextEdit,
         QVBoxLayout, QWidget)
 
-class Window(QDialog):
+class App(QMainWindow):
+
     def __init__(self):
         super().__init__()
-        self.originalPalette = QApplication.palette() 
-        self.setWindowTitle("Device Cheak:")
-        self.setGeometry(400, 200, 1000, 600)
+        self.title = 'Device cheak:'
+        self.left = 0
+        self.top = 0
+        self.width = 1000
+        self.height = 800
+        self.setWindowTitle(self.title)
+        self.setGeometry(self.left, self.top, self.width, self.height)
         
-        self.TableServiceList()  
-
-        self.UI = QTabWidget()
-        self.UI.setSizePolicy(QSizePolicy.Policy.Preferred,
-                QSizePolicy.Policy.Ignored)
-        tableWidget = QTableWidget(10, 10)
-
-
-        tab1 = QWidget()
-        # tab1grid = QVBoxLayout()
-        # tab1grid.addWidget(self.ServiceList)
-        # tab1.setLayout(tab1grid)
-        tab1hbox = QHBoxLayout()
-        tab1hbox.setContentsMargins(5, 5, 5, 5)
-        tab1hbox.addWidget(tableWidget)
-        tab1.setLayout(tab1hbox)
+        self.table_widget = ServiceList(self)
+        self.setCentralWidget(self.table_widget)
         
+        # self.show()   
 
-        # Service = QVBoxLayout()
-        # Service.addWidget(self.ServiceList)
-        # self.setLayout(Service)
-
-        tab2 = QWidget()
-        tab2hbox = QHBoxLayout()
-        tab2hbox.setContentsMargins(5, 5, 5, 5)
-        tab2hbox.addWidget(tableWidget)
-        tab2.setLayout(tab2hbox)
-
-
-        self.UI.addTab(tab1, "Devices")
-        self.UI.addTab(tab2, "Service")
+class ServiceList(QWidget):
     
+    def __init__(self, parent):
+        super(QWidget, self).__init__(parent)
+        self.layout = QVBoxLayout(self)
+        
+        # Initialize tab screen
+        self.tabs = QTabWidget()
+        self.tab1 = QWidget()
+        self.tab2 = QWidget()
+        self.tabs.resize(300,200)
+
+        self.TableServiceList()
+        
+        # Add tabs
+        self.tabs.addTab(self.tab1,"Devices")
+        self.tabs.addTab(self.tab2,"Service")
+        
+        # Create first tab
+        self.tab2.layout = QVBoxLayout(self)
+        self.tab2.layout.addWidget(self.ServiceList)
+        self.tab2.setLayout(self.tab2.layout)
+        
+        # Add tabs to widget
+        self.layout.addWidget(self.tabs)
+        self.setLayout(self.layout)
+        
+    # @pyqtSlot()
+    # def on_click(self):
+    #     print("\n")
+    #     for currentQTableWidgetItem in self.tableWidget.selectedItems():
+    #         print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(), currentQTableWidgetItem.text())
+
     def TableServiceList(self):
         self.ServiceList = QGroupBox()
 
@@ -105,55 +116,7 @@ class DeviceCheak():
     def __init__(self):
         super().__init__()
         self.vision()
-
-    def vision(self):
-
-        button = QPushButton('test')
-        # self.bottomLeftTabWidget = QTabWidget()
-        # self.bottomLeftTabWidget.setSizePolicy(QSizePolicy.Policy.Preferred,
-        #         QSizePolicy.Policy.Ignored)
-
-        # tab1 = QWidget()
-        # tableWidget = QTableWidget(10, 10)
-
-        # tab1hbox = QHBoxLayout()
-        # tab1hbox.setContentsMargins(5, 5, 5, 5)
-        # tab1hbox.addWidget(tableWidget)
-        # tab1.setLayout(tab1hbox)
-
-        # tab2 = QWidget()
-        # textEdit = QTextEdit()
-
-        # textEdit.setPlainText("Twinkle, twinkle, little star,\n"
-        #                         "How I wonder what you are.\n" 
-        #                         "Up above the world so high,\n"
-        #                         "Like a diamond in the sky.\n"
-        #                         "Twinkle, twinkle, little star,\n" 
-        #                         "How I wonder what you are!\n")
-
-        # tab2hbox = QHBoxLayout()
-        # tab2hbox.setContentsMargins(5, 5, 5, 5)
-        # tab2hbox.addWidget(textEdit)
-        # tab2.setLayout(tab2hbox)
-
-        # self.bottomLeftTabWidget.addTab(tab1, "&Table")
-        # self.bottomLeftTabWidget.addTab(tab2, "Text &Edit")
-        
-    
-    
-
-    # def vision(self):
-    #     mainLayout = QGridLayout()
-    #     mainLayout.addWidget(self.DeviceStatus(100), 0, 1)
-
-
-
-    # def DeviceStatus(val):
-    #     speed = QLabel(f'Speed {val}')
-
-    #     slider = QSlider(Qt.Orientation.Horizontal)
-    #     slider.setValue(40)
-        
+       
 
   
 
@@ -345,8 +308,7 @@ if __name__ == '__main__':
     import sys
 
     app = QApplication(sys.argv)
-    win = Window()
+    win = App()
     win.show()
-    # gallery = WidgetGallery()
-    # gallery.show()
+
     sys.exit(app.exec())
