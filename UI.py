@@ -1,3 +1,4 @@
+import sys
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QDateTime, Qt, QTimer
 from PyQt5.QtWidgets import (QMainWindow, QApplication, QCheckBox, QComboBox, QDateTimeEdit,
@@ -20,9 +21,7 @@ class App(QMainWindow):
         self.table_widget = ServiceList(self)
         self.setCentralWidget(self.table_widget)
 
-
         
-
 class ServiceList(QWidget):
     
     def __init__(self, *args, **kwargs):
@@ -38,9 +37,22 @@ class ServiceList(QWidget):
         self.tab2.layout = QVBoxLayout(self)
         self.tab2.layout.addWidget(self.ServiceList)
         self.tab2.setLayout(self.tab2.layout)
-        self.layout.addWidget(self.tabs)
-        self.setLayout(self.layout)
 
+        # self.DeviceSetup()
+        self.button = QPushButton("Test button")
+
+        self.tab1.layout = QVBoxLayout(self)
+        self.tab1.layout.addWidget(self.button)
+        self._bar = _Bar()
+        self.tab1.layout.addWidget(self._bar)
+        self._dial = QtWidgets.QDial()
+        self.tab1.layout.addWidget(self._dial)
+        self.tab1.setLayout(self.tab1.layout)
+        self._dial.valueChanged.connect(self._bar._trigger_refresh)
+        # self.tab1.setLayout(self.tab1.layout)
+
+        self.layout.addWidget(self.tabs)
+        
         
     def TableServiceList(self):
         self.ServiceList = QGroupBox()
@@ -92,19 +104,78 @@ class ServiceList(QWidget):
         layout_stp.addWidget(curr_stp_val)
         self.Step.setLayout(layout_stp)
 
-class Device(QtWidgets.QWidget):
-
+class _Bar(QtWidgets.QWidget):
+    # pass
     def __init__(self, *args, **kwargs):
-        super(Device, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-    def printDevice(self, id):
-        painter = QtGui.QPainter(self.label.pixmap())
-        pen = QtGui.QPen()
-        pen.setWidth(40)
-        pen.setColor(QtGui.QColor('red'))
-        painter.setPen(pen)
-        painter.drawPoint(200, 150)
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.MinimumExpanding
+        )
+    def _trigger_refresh(self):
+        self.update()
+
+    def sizeHint(self):
+        return QtCore.QSize(40,120)
+
+    def paintEvent(self, e):
+        painter = QtGui.QPainter(self)
+
+        brush = QtGui.QBrush()
+        brush.setColor(QtGui.QColor('green'))
+        brush.setStyle(Qt.SolidPattern)
+        rect = QtCore.QRect(0, 0, painter.device().width(), painter.device().height())
+        painter.fillRect(rect, brush)
+
+        # Get current state.
+        # dial = self.parent()._dial
+        # vmin, vmax = dial.minimum(), dial.maximum()
+        # value = dial.value()
+
+        vmin = 0
+        vmax = 99
+        value = 70
+
+        padding = 5
+
+        # Define our canvas.
+        d_height = painter.device().height() - (padding * 2)
+        d_width = painter.device().width() - (padding * 2)
+
+        # Draw the bars.
+        step_size = d_height / 5
+        bar_height = step_size * 0.6
+        bar_spacer = step_size * 0.4 / 2
+
+        pc = (value - vmin) / (vmax - vmin)
+        n_steps_to_draw = int(pc * 5)
+        brush.setColor(QtGui.QColor('red'))
+        # print (brush)
+        for n in range(n_steps_to_draw):
+            rect = QtCore.QRect(
+                int(padding),
+                int(padding + d_height - ((n+1) * step_size) + bar_spacer),
+                int(d_width),
+                int(bar_height)
+            )
+            painter.fillRect(rect, brush)
+
         painter.end()
+
+# class Device(QtWidgets.QWidget):
+
+#     def __init__(self, *args, **kwargs):
+#         super(Device, self).__init__(*args, **kwargs)
+
+#     def printDevice(self, id):
+#         painter = QtGui.QPainter(self.label.pixmap())
+#         pen = QtGui.QPen()
+#         pen.setWidth(40)
+#         pen.setColor(QtGui.QColor('red'))
+#         painter.setPen(pen)
+#         painter.drawPoint(200, 150)
+#         painter.end()
        
 
 if __name__ == '__main__':
@@ -113,6 +184,8 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     win = App()
+    # dev = Device()
+    # dev.show()
     win.show()
 
     sys.exit(app.exec())

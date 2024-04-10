@@ -46,7 +46,7 @@ class _Bar(QtWidgets.QWidget):
         n_steps_to_draw = int(pc * 5)
         brush.setColor(QtGui.QColor('red'))
         # print (brush)
-        for n in range(n_steps_to_draw):
+        for n in range(5):
             rect = QtCore.QRect(
                 int(padding),
                 int(padding + d_height - ((n+1) * step_size) + bar_spacer),
@@ -76,7 +76,7 @@ class PowerBar(QtWidgets.QWidget):
 
         self.setLayout(layout)
 
-        self._dial.valueChanged.connect(self._bar._trigger_refresh)
+        # self._dial.valueChanged.connect(self._bar._trigger_refresh)
 
     
 
