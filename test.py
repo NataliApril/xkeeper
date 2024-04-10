@@ -2,15 +2,15 @@ import sys
 from PyQt5.QtWidgets import (QWidget, QPushButton, QApplication, 
                              QHBoxLayout, QVBoxLayout, QGridLayout, 
                              QLabel, QGroupBox)
-import time 
-import can
-from gpiozero import LED
-import binascii
+# import time 
+# import can
+# from gpiozero import LED
+# import binascii
 
 interface = 'socketcan'
 channel = 'can0'
 
-led = LED(21)
+# led = LED(21)
  
  
 class PyQtLayout(QWidget):
@@ -18,6 +18,9 @@ class PyQtLayout(QWidget):
     def __init__(self):
         super().__init__()
         self.UI()
+
+    def click(self):
+        print ("Clicked")
  
     def UI(self):
         '''speed control'''
@@ -28,7 +31,9 @@ class PyQtLayout(QWidget):
         '''direction control'''
         Label2 = QLabel("Direction:")
         Button_dir1 = QPushButton('CV')
-        Button_dir2 = QPushButton('CCV')     
+        Button_dir1.clicked.connect(self.click)
+        Button_dir2 = QPushButton('CCV')
+        Button_dir2.clicked.connect(self.click)     
 
         '''steps control'''
         Label3 = QLabel("Step:")
@@ -50,21 +55,21 @@ class PyQtLayout(QWidget):
         self.show()
  
 
-def producer(id):
-    bus = can.Bus(channel=channel, interface=interface)
-    for i in range(10):
-        temp = binascii.unhexlify('4142434445464748')
-        msg = can.Message(arbitration_id=0xc0ffee,
-                          data=temp,
-                          is_extended_id=False)
-        bus.send(msg)
-        led.on()
-        time.sleep(1)     
-        led.off()
-        time.sleep(1)
-        print ("send", i)
+# def producer(id):
+#     bus = can.Bus(channel=channel, interface=interface)
+#     for i in range(10):
+#         temp = binascii.unhexlify('4142434445464748')
+#         msg = can.Message(arbitration_id=0xc0ffee,
+#                           data=temp,
+#                           is_extended_id=False)
+#         bus.send(msg)
+#         led.on()
+#         time.sleep(1)     
+#         led.off()
+#         time.sleep(1)
+#         print ("send", i)
         
-    time.sleep(1)
+#     time.sleep(1)
     
  
 if __name__ == '__main__':
