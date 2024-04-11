@@ -1,6 +1,7 @@
+import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton
-import sys
+
 import time
 
 
