@@ -1,9 +1,14 @@
 import serial
+import time
 
-serial_port = serial.Serial('COM1', '9600')
+serial_port = serial.Serial('/dev/ttyUSB0', '115200')
+#serial_port.open()
+command = "ATI+CGSN\r\n"
 
-command = "AT\r\n"
-
-serial_port.write(command.encode())
-response = serial_port.read_all().decode()
-print (response)
+while True:
+	serial_port.write(command.encode())
+	response = serial_port.readline()
+	print (response)
+	time.sleep(1)
+	
+serial_port.close()
