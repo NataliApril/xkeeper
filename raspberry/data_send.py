@@ -6,7 +6,7 @@ import parser as ps
 interface = 'socketcan'
 channel = 'can0'
 
-led = LED(21)
+#led = LED(21)
 
 motor = [23, 10, 10, 0, 0, 0] 
 start_run = [88, 0, 0, 0, 0, 0] 
