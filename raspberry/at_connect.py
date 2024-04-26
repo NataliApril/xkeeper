@@ -1,7 +1,7 @@
 import serial
 import time
 
-serial_port = serial.Serial('/dev/ttyCH9344USB0', '115200')
+serial_port = serial.Serial('/dev/ttyUSB0', '115200')
 command = "ATI+CGSN\r\n"
 
 def at_read_write():
