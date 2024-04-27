@@ -535,8 +535,8 @@ class Ui_MainWindow(object):
         self.started.setText("Started")
         
 
-    def GSM(self, text):
-        self.gsm_1.setText("GSM: " + text)
+    def GSM(self, _str):
+        self.gsm_1.setText("GSM: " + _str)
         #sub = "+CGSN: "
         #if not que.empty:
         #temp = str(que.get(block = False))

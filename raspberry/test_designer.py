@@ -14,7 +14,10 @@ def UI(imei_q):
     ui = uiii.Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    #ui.GSM("test" + str(imei_q.get()))
+    if (imei_q.qsize() > 0):
+        ui.GSM("test" + str(imei_q.get(block = False)))
+    else:
+        print("nooo")
     sys.exit(app.exec_())
     #at.close_connect()
     
@@ -27,10 +30,12 @@ def data_in(in_q):
         
 def at_con(imei_que):
     print ("Thread AT communicate start")
-    #ui2 = uiii.Ui_MainWindow()
+    ui2 = uiii.Ui_MainWindow()
     #while True:
     at.comports_cheak()
     at.at_read_write(imei_que)
+    #if (imei_que.qsize() > 0):
+    #    ui2.GSM(imei_que.get())
     #at.at_read_write(imei_q)
         #uiii.GSM("test")
         #if imei_q:
@@ -44,7 +49,7 @@ def at_con(imei_que):
 if __name__ == "__main__":
     q = queue.Queue()
     imei = queue.Queue()
-    t1 = Thread(target = UI, args = (q, ))
+    t1 = Thread(target = UI, args = (imei, ))
     t2 = Thread(target = data_in, args = (q, ))
     t3 = Thread(target = at_con, args = (imei, ))
     t1.deamon = False   #main prcocess
