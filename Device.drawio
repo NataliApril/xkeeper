@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-04-27T09:00:43.846Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 YaBrowser/24.4.0.0 Safari/537.36" etag="MAiX2_3wYPdJ00VTLITY" version="24.3.1" type="github">
+<mxfile host="app.diagrams.net" modified="2024-04-27T10:08:17.678Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 YaBrowser/24.4.0.0 Safari/537.36" etag="9W13ofdtudL5-6NbE-n2" version="24.3.1" type="github">
   <diagram name="Страница — 1" id="FMfTdgro5tbyeO14SIyf">
     <mxGraphModel dx="1386" dy="791" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
@@ -38,10 +38,10 @@
           <mxGeometry x="80" y="370" width="200" height="110" as="geometry" />
         </mxCell>
         <mxCell id="ljvDQ73Js9TkoyDWwZD--13" value="&lt;b&gt;&lt;u&gt;CH328L (8UART):&lt;/u&gt;&lt;/b&gt;&lt;div&gt;- Программирование ESP&lt;br&gt;- Получение данных об антенне&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="80" y="520" width="200" height="90" as="geometry" />
+          <mxGeometry x="80" y="520" width="200" height="100" as="geometry" />
         </mxCell>
         <mxCell id="ljvDQ73Js9TkoyDWwZD--14" value="&lt;b&gt;&lt;u&gt;Плата управления линией:&lt;/u&gt;&lt;/b&gt;&lt;div&gt;- Управление шаговыми двигателями линии&lt;br&gt;- Получение данных с предыдущих участков, передача команд на следующие участки&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="80" y="660" width="200" height="100" as="geometry" />
+          <mxGeometry x="80" y="660" width="200" height="110" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
