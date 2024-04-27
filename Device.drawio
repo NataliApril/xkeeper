@@ -1,9 +1,42 @@
-<mxfile host="app.diagrams.net" modified="2024-04-27T08:27:34.932Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 YaBrowser/24.4.0.0 Safari/537.36" version="24.3.1" etag="T2fdxbkHs0E74ByxhRZW" type="github">
+<mxfile host="app.diagrams.net" modified="2024-04-27T08:54:23.326Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 YaBrowser/24.4.0.0 Safari/537.36" etag="2fKVSkf2G1lXabQ9UwjA" version="24.3.1" type="github">
   <diagram name="Страница — 1" id="FMfTdgro5tbyeO14SIyf">
-    <mxGraphModel>
+    <mxGraphModel dx="1386" dy="791" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="ljvDQ73Js9TkoyDWwZD--1" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="990" y="10" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ljvDQ73Js9TkoyDWwZD--2" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="990" y="110" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ljvDQ73Js9TkoyDWwZD--3" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="990" y="210" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ljvDQ73Js9TkoyDWwZD--4" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="990" y="310" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ljvDQ73Js9TkoyDWwZD--5" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="990" y="410" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ljvDQ73Js9TkoyDWwZD--6" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="990" y="510" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ljvDQ73Js9TkoyDWwZD--7" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="990" y="610" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ljvDQ73Js9TkoyDWwZD--8" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="990" y="710" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ljvDQ73Js9TkoyDWwZD--9" value="&lt;b&gt;&lt;u&gt;Raspberry Pi&lt;/u&gt;&lt;/b&gt;:&lt;br&gt;- Пользовательский интерфейс&lt;br&gt;- Управление производственной линией&lt;br&gt;- Команды управления программатором (CAN)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="60" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ljvDQ73Js9TkoyDWwZD--10" value="&lt;b&gt;&lt;u&gt;STM G0 (драйвер шагового двигателя):&lt;/u&gt;&lt;/b&gt;&lt;div&gt;- Получение команд управления (CAN)&amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp;- Управление шаговым двигателем (подъем мультизаготовки)&amp;nbsp;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="200" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="ljvDQ73Js9TkoyDWwZD--11" value="&lt;b&gt;&lt;u&gt;STM G0 (управление программатором ICP):&lt;/u&gt;&lt;/b&gt;&lt;div&gt;- Получение команд управления (CAN)&lt;/div&gt;&lt;div&gt;- Передача данных о статусе прошивки (CAN)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="380" width="200" height="110" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
