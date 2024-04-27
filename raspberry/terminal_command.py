@@ -17,16 +17,16 @@ else:
 import pyudev 
 
 ctx = pyudev.Context()
-print (list(ctx.list_devices(subsystem='usb')))
+print (list(ctx.list_devices(subsystem='usb')))'''
 
 import serial
 from serial.tools import list_ports
 
-for port in list_ports.grep(""):
+for port in list_ports.comports():
 	#if "USB" in port.hwid():
-	print(port)'''
+	print(port)
 	
-import usb.core
+#import usb.core
 	
 	
 
