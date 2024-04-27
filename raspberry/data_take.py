@@ -18,17 +18,23 @@ def put_data(q):
     print ("data: ", message.data)
     pars.parse(q.get())
 
-def take():
+def take(q):
     bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
     reader = can.BufferedReader()
     bus_notifier = can.Notifier(bus, [reader]) 
-    messages = []
     msg = reader.get_message(1)
-    if msg is None:
-        #break
-        print("None")
-    messages.append(msg)
-    print ("data in take: ", msg.data)
+    if msg is not None:
+        q.put(msg.data)
+        #print ("size: ", q.qsize())
+        pars.parse(q.get())
+        #print ("size: ", q.qsize())
+    #else:
+        #print("None")
+        
+def clear_buffer():
+    bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
+    bus.flush_tx_buffer()
+    
     
     
 

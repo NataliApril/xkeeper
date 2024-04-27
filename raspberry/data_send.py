@@ -34,4 +34,6 @@ def producer(_str):
                       data=packed_data,
                       is_extended_id=False)
     bus.send(msg)
+    
+    
 

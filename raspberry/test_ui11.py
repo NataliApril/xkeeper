@@ -413,6 +413,7 @@ class Ui_MainWindow(object):
         self.dec_val.setText("DEC val: " + str(value))
         ds.motor[2] = value
         
+        #######   action on click button   ######
         self.sendButton.clicked.connect(lambda: ds.producer("motor"))
         self.startButton.clicked.connect(lambda: ds.producer("start_run"))
         self.startButton_2.clicked.connect(lambda: ds.producer("start_move"))
@@ -534,13 +535,15 @@ class Ui_MainWindow(object):
         self.started.setText("Started")
         
 
-    def GSM(self, que):
-        sub = "+CGSN: "
-        if not que.empty:
-            temp = str(que.get(block = False))
-            if (temp > sub and len(temp) > len(sub)):
-                print ("true") 
-                self.gsm_1.setText("GSM: " + temp)
+    def GSM(self, text):
+        self.gsm_1.setText("GSM: " + text)
+        #sub = "+CGSN: "
+        #if not que.empty:
+        #temp = str(que.get(block = False))
+        #if (temp > sub and len(temp) > len(sub)):
+        #print ("true") 
+        #else:
+        #print("empty")
             
 
 
