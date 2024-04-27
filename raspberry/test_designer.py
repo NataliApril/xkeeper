@@ -16,12 +16,15 @@ def UI(in_q):
     ui.GSM(in_q)
     MainWindow.show()
     sys.exit(app.exec_())
+    at.close_connect()
     
 def data_in():
+    print ("Thread CAN communicate start")
     while True:
         dt.put_data(q)
         
 def at_con(out_q):
+    print ("Thread AT communicate start")
     #ui2 = uiii.Ui_MainWindow()
     while True:
         data = at.at_read_write()
@@ -29,8 +32,8 @@ def at_con(out_q):
             out_q.put(data, block = False)
             print (data)
         #ui2.GSM(data)
-    '''if data > "":
-        uiii.GSM(data)'''
+    if data > "":
+        uiii.GSM(data)
     
         
 if __name__ == "__main__":
@@ -38,10 +41,13 @@ if __name__ == "__main__":
     t1 = Thread(target = UI, args = (q, ))
     t2 = Thread(target = data_in)
     t3 = Thread(target = at_con, args = (q, ))
-    t1.deamon = True
-    t2.deamon = True
-    t3.deamon = True
+    t1.deamon = False   #main prcocess
+    t2.deamon = True    #deamon process
+    t3.deamon = True    #deamon process
     t1.start()
     t2.start()
     t3.start()
+    t1.join()
+    t2.join()
+    t3.join()
     

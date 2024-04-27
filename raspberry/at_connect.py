@@ -15,3 +15,7 @@ def at_read_write():
 
 '''if __name__ == "__main__":
 	at_read_write()'''
+	
+def close_connect():
+	serial_port.close()
+	print ("AT conection close")
