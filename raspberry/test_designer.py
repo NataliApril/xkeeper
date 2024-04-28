@@ -7,6 +7,8 @@ from threading import *
 import at_connect as at
 import os
 
+stop_tread = False
+
 def UI(imei_q):
     global flag_end
     app = uiii.QtWidgets.QApplication(sys.argv)
@@ -17,13 +19,16 @@ def UI(imei_q):
     '''while (imei_q.qsize() <= 0):
         ui.GSM("test")
     ui.GSM(str(imei_q.get(block = False)))'''
-    os._exit(app.exec_())
+    sys.exit(app.exec_())
+    print ("stop UI")
+    #os._exit(app.exec_())
     
     
 def data_in(in_q):
+    global stop_tread
     print ("Thread CAN communicate start")
     dt.clear_buffer()
-    while True:
+    while not stop_tread:
         print ("read CAN")
         dt.take(in_q)
     #os._exit(1)
@@ -40,6 +45,7 @@ def at_con_1(imei_que, com_num):
     
         
 if __name__ == "__main__":
+    #global stop_tread
     q = queue.Queue()
     imei = queue.Queue()
     can_pack = queue.Queue()
@@ -59,6 +65,7 @@ if __name__ == "__main__":
     t4.join()
     print("thread 3, 4 ended")
     t1.join()
+    stop_tread = True
     print("thread 1 ended")
     t2.join()
     print("thread 2 ended")
