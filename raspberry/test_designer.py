@@ -5,10 +5,10 @@ import queue
 import data_take as dt
 from threading import *
 import at_connect as at
-
-
+import os
 
 def UI(imei_q):
+    global flag_end
     app = uiii.QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = uiii.Ui_MainWindow()
@@ -17,13 +17,16 @@ def UI(imei_q):
     '''while (imei_q.qsize() <= 0):
         ui.GSM("test")
     ui.GSM(str(imei_q.get(block = False)))'''
-    sys.exit(app.exec_())
+    os._exit(app.exec_())
+    
     
 def data_in(in_q):
     print ("Thread CAN communicate start")
     dt.clear_buffer()
     while True:
+        print ("read CAN")
         dt.take(in_q)
+    #os._exit(1)
         
 def at_con(imei_que, com_num):
     print ("Thread AT communicate start", com_num)
@@ -40,12 +43,11 @@ if __name__ == "__main__":
     q = queue.Queue()
     imei = queue.Queue()
     can_pack = queue.Queue()
-    #UI(imei)
     t1 = Thread(target = UI, args = (imei, ))
     t2 = Thread(target = data_in, args = (q, ))
     t3 = Thread(target = at_con, args = (imei, 0))
     t4 = Thread(target = at_con, args = (imei, 1))
-    t1.deamon = False   #main prcocess
+    t1.deamon = True   #main prcocess
     t2.deamon = True    #deamon processt
     t3.deamon = True    #deamon process
     t4.deamon = True
@@ -53,9 +55,13 @@ if __name__ == "__main__":
     t2.start()
     t3.start()
     t4.start()
-    t1.join()
-    t2.join()
     t3.join()
     t4.join()
+    print("thread 3, 4 ended")
+    t1.join()
+    print("thread 1 ended")
+    t2.join()
+    print("thread 2 ended")
+    
 
     
