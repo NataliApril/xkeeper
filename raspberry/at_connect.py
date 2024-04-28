@@ -18,9 +18,13 @@ def close_connect():
 	serial_port.close()
 	print ("AT conection close")
 	
-	
+comports_list = ['/dev/ttyCH9344USB0', '/dev/ttyCH9344USB1', '/dev/ttyCH9344USB2',
+				 '/dev/ttyCH9344USB3', '/dev/ttyCH9344USB4', '/dev/ttyCH9344USB5',
+				 '/dev/ttyCH9344USB6', '/dev/ttyCH9344USB7']
+baudrate = '115200'
+				 
 def at_read_write(que_imei):
-	serial_port = serial.Serial('/dev/ttyUSB0', '115200')
+	serial_port = serial.Serial(comports_list[0], baudrate)
 	if serial_port:
 		print ("open")
 		time.sleep(0.5)

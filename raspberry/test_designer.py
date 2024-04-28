@@ -19,13 +19,10 @@ def UI(imei_q):
     ui.GSM(str(imei_q.get(block = False)))'''
     sys.exit(app.exec_())
     
-  
-    
 def data_in(in_q):
     print ("Thread CAN communicate start")
     dt.clear_buffer()
     while True:
-        #dt.put_data(q)
         dt.take(in_q)
         
 def at_con(imei_que):
@@ -33,21 +30,12 @@ def at_con(imei_que):
     at.comports_cheak()
     at.at_read_write(imei_que)
     
-    #if (imei_que.qsize() > 0):
-    #    ui2.GSM(imei_que.get())
-    #at.at_read_write(imei_q)
-        #uiii.GSM("test")
-        #if imei_q:
-            #uiii.GSM (imei_q.get())
-            #print (data)
-        #ui2.GSM(data)
-        #if data > "":
-            #uiii.GSM(data)
-    
         
 if __name__ == "__main__":
     q = queue.Queue()
     imei = queue.Queue()
+    can_pack = queue.Queue()
+    #UI(imei)
     t1 = Thread(target = UI, args = (imei, ))
     t2 = Thread(target = data_in, args = (q, ))
     t3 = Thread(target = at_con, args = (imei, ))
@@ -57,7 +45,7 @@ if __name__ == "__main__":
     t1.start()
     t2.start()
     t3.start()
-    #t1.join()
+    t1.join()
     t2.join()
     t3.join()
 

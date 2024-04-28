@@ -414,8 +414,9 @@ class Ui_MainWindow(object):
         ds.motor[2] = value
         
         #######   action on click button   ######
+        #can_data = queue.Queue()
         self.sendButton.clicked.connect(lambda: ds.producer("motor"))
-        self.startButton.clicked.connect(lambda: ds.producer("start_run"))
+        self.startButton.clicked.connect(lambda: ds.producer("start_run", ))
         self.startButton_2.clicked.connect(lambda: ds.producer("start_move"))
         self.stepButton.clicked.connect(lambda: ds.producer("stop"))
         self.programming.clicked.connect(lambda: ds.producer("programm"))
