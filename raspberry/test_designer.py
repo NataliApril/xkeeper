@@ -25,10 +25,15 @@ def data_in(in_q):
     while True:
         dt.take(in_q)
         
-def at_con(imei_que):
-    print ("Thread AT communicate start")
+def at_con(imei_que, com_num):
+    print ("Thread AT communicate start", com_num)
     at.comports_cheak()
-    at.at_read_write(imei_que)
+    at.at_read_write(imei_que, com_num)
+    
+def at_con_1(imei_que, com_num):
+    print ("Thread AT communicate start", com_num)
+    at.comports_cheak()
+    at.at_read_write(imei_que, com_num)
     
         
 if __name__ == "__main__":
@@ -38,15 +43,19 @@ if __name__ == "__main__":
     #UI(imei)
     t1 = Thread(target = UI, args = (imei, ))
     t2 = Thread(target = data_in, args = (q, ))
-    t3 = Thread(target = at_con, args = (imei, ))
+    t3 = Thread(target = at_con, args = (imei, 0))
+    t4 = Thread(target = at_con, args = (imei, 1))
     t1.deamon = False   #main prcocess
     t2.deamon = True    #deamon processt
     t3.deamon = True    #deamon process
+    t4.deamon = True
     t1.start()
     t2.start()
     t3.start()
+    t4.start()
     t1.join()
     t2.join()
     t3.join()
+    t4.join()
 
     
