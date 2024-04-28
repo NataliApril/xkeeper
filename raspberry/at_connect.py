@@ -32,10 +32,19 @@ def at_read_write(que_imei):
 			#line = serial_port.readline().decode().strip()
 			line = serial_port.readline()
 			if (line):
-				#print("Rec:", line)
+				print("Rec:", line)
 				
 				#### errors of decode() ####
-				if (start_line in line.decode()):
+				try: 
+					unicode_string = line.decode('utf-8')
+				except UnicodeDecodeError:
+					unicode_string = line.decode('utf-8', 'ignore')
+				except serial.SerialException as se:
+					print("Serial port error:", str(se))
+				except serial.SerialTimeoutExcepction as ter:
+					print ("Timeout error", str(ter))
+					
+				if (start_line in unicode_string):
 					print ("imei:", line)
 					que_imei.put(line.decode())
 					
