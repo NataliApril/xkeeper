@@ -23,10 +23,11 @@ comports_list = ['/dev/ttyCH9344USB0', '/dev/ttyCH9344USB1', '/dev/ttyCH9344USB2
 				 '/dev/ttyCH9344USB6', '/dev/ttyCH9344USB7']
 baudrate = '115200'
 #timeout 5 sec
-timeout = 5000
+timeout = 5
 				 
 def at_read_write(que_imei, port_num):
-	serial_port = serial.Serial(comports_list[port_num], baudrate)
+	global timeout
+	serial_port = serial.Serial(comports_list[port_num], baudrate, timeout = 0)
 	if serial_port:
 		#open com-port
 		print ("open port: ", comports_list[port_num])
@@ -43,14 +44,23 @@ def at_read_write(que_imei, port_num):
 		
 		#take start time
 		start_time = time.perf_counter()
-		stop_time = 0
-		print (comports_list[port_num], ": time start: ", start_time)
+		#stop_time = 0
+		#print (comports_list[port_num], ": time start: ", start_time)
+		#print ("status = ", stop_thread, " timeout ", timeout)
 		
 		#read GSM-module
-		while not stop_thread:			
+		while (not stop_thread):			
 			line = serial_port.readline()
+			
+			#cheak timeout
+			if ((time.perf_counter() - start_time) > timeout):
+				stop_thread = True
+				print ("!!!status = ", stop_thread, " time ", (time.perf_counter() - start_time))
+				serial_port.close()
+			#else:
+				#print ("ZZZstatus = ", stop_thread, " time ", (time.perf_counter() - start_time))
+				
 			if (line):
-
 				#errors of decode()
 				try: 
 					unicode_string = line.decode('utf-8')
@@ -60,11 +70,6 @@ def at_read_write(que_imei, port_num):
 					print("Serial port error:", str(se))
 				except serial.SerialTimeoutExcepction as ter:
 					print ("Timeout error", str(ter))
-				
-				#cheak timeout
-				if ((time.perf_counter() - start_time) > timeout):
-					stop_thread = True
-					serial_port.close()
 					
 				#read IMEI line	
 				if (start_line in unicode_string):
@@ -82,10 +87,12 @@ def at_read_write(que_imei, port_num):
 					
 					stop_thread = True
 					#break
+				#print ("!!!!")
 				#else:
 				#	print("not equalse")
 			#else:
 			#	print ("empty")
+		print ("exit from while")
 	else:
 		print("close")
 
