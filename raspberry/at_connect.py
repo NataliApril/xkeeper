@@ -5,7 +5,6 @@ import queue
 
 import tty
 
-#serial_port = serial.Serial('/dev/ttyUSB0', '115200')
 command = "ATI+CGSN\r\n"
 start_line = "+CGSN"
 
@@ -20,17 +19,21 @@ def close_connect():
 	serial_port.close()
 	#print ("AT conection close ")
 	
-'''comports_list = ['/dev/ttyCH9344USB0', '/dev/ttyCH9344USB1', '/dev/ttyCH9344USB2',
-				 '/dev/ttyCH9344USB3', '/dev/ttyCH9344USB4', '/dev/ttyCH9344USB5',
-				 '/dev/ttyCH9344USB6', '/dev/ttyCH9344USB7']'''
 baudrate = '115200'
+
 #timeout 5 sec
 timeout = 5
+delta_time = 1
 				 
 def at_read_write(que_imei, port_num):
 	global timeout
-	comports_list = tty.GetCHDevices()
+	global delta_time
+	#take com-ports list
+	comports_list = tty.GetCHDevices("ttyCH")
+	
+	#open serial conection NON Block (timeout = 0)
 	serial_port = serial.Serial(comports_list[port_num], baudrate, timeout = 0)
+	
 	if serial_port:
 		#open com-port
 		print ("open port: ", comports_list[port_num])
@@ -47,9 +50,7 @@ def at_read_write(que_imei, port_num):
 		
 		#take start time
 		start_time = time.perf_counter()
-		#stop_time = 0
-		#print (comports_list[port_num], ": time start: ", start_time)
-		#print ("status = ", stop_thread, " timeout ", timeout)
+		round_time = time.perf_counter()
 		
 		#read GSM-module
 		while (not stop_thread):			
@@ -58,10 +59,11 @@ def at_read_write(que_imei, port_num):
 			#cheak timeout
 			if ((time.perf_counter() - start_time) > timeout):
 				stop_thread = True
-				print ("!!!status = ", stop_thread, " time ", (time.perf_counter() - start_time))
 				serial_port.close()
-			#else:
-				#print ("ZZZstatus = ", stop_thread, " time ", (time.perf_counter() - start_time))
+			elif ((time.perf_counter() - round_time) > delta_time):
+				round_time = time.perf_counter()
+				#resend IMEI AT-command
+				serial_port.write(command.encode())
 				
 			if (line):
 				#errors of decode()
@@ -78,9 +80,10 @@ def at_read_write(que_imei, port_num):
 				if (start_line in unicode_string):
 					print ("imei:", line)
 					que_imei.put(line.decode())
-					
+					#close com-port
 					serial_port.close()
 					
+					# debug info
 					print (comports_list[port_num], ": conection close")
 					stop_time = time.perf_counter()
 					print (comports_list[port_num], ": time stop: ", stop_time)
@@ -89,12 +92,7 @@ def at_read_write(que_imei, port_num):
 					print ("queue: ", que_imei.qsize())
 					
 					stop_thread = True
-					#break
-				#print ("!!!!")
-				#else:
-				#	print("not equalse")
-			#else:
-			#	print ("empty")
+				
 		print ("exit from while")
 	else:
 		print("close")

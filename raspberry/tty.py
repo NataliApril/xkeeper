@@ -7,17 +7,12 @@ usb_devices = []
 #cheak usb devices
 def GetDevList() : return os.listdir("/dev")
 
-def GetCHDevices():
+def GetCHDevices(_str):
 	devOld = GetDevList()
-
 	for device in devOld:
-		if usb_CH in device:
-			#print (device)
+		if _str in device:
 			usb_devices.append("/dev/" + device)
-			
-	#print (usb_devices)
 	return usb_devices
 	
-GetCHDevices()
 		
 
