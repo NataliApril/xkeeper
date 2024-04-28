@@ -47,7 +47,7 @@ if __name__ == "__main__":
     t2 = Thread(target = data_in, args = (q, ))
     t3 = Thread(target = at_con, args = (imei, 0))
     t4 = Thread(target = at_con, args = (imei, 1))
-    t1.deamon = True   #main prcocess
+    t1.deamon = True    #main prcocess
     t2.deamon = True    #deamon processt
     t3.deamon = True    #deamon process
     t4.deamon = True
