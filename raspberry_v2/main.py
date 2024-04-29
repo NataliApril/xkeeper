@@ -51,11 +51,15 @@ if __name__ == "__main__":
     
     t4 = Thread (target = toggle)
     
+    t5 = Thread (target = usb.system_cmd, args= ("esptool.py --chip esp8266 --baud 115200 --port /dev/ttyUSB0 write_flash -z 0x0 /home/user/xkeeper/sketch_may06a/sketch_may06a.ino.esp8285.bin", ))
+    
     t1.deamon = True    #deamon process
     t2.deamon = True    #deamon process
     t3.deamon = True    #deamon process
     
     t4.deamon = True
+    
+    t5.deamon = True
     
     t1.start()
     t2.start()
@@ -63,6 +67,8 @@ if __name__ == "__main__":
     
     t4.start()
 
+    t5.start()
+    
     t3.join()
     print ("t3 ended")
     t1.join()
@@ -74,6 +80,8 @@ if __name__ == "__main__":
     print("thread 2 ended")
     t4.join()
     print ("thread 4 ended")
+    t5.join()
+    print ("thread 5 ended")
 
     
 

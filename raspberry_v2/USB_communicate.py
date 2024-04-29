@@ -132,6 +132,9 @@ class USB_communicate():
 			print ("Thread ", port_num, " close")
 		else:
 			print("close")
+			
+	def system_cmd(self, cmd):
+		os.system(cmd)
 
 
 
