@@ -72,10 +72,13 @@ def at_read_write(que_imei, port_num):
 					
 				#read IMEI line	
 				if (start_line in unicode_string):
-					print ("imei:", line)
-					que_imei.put(line.decode())
+					#print ("imei:", line)
+					to_print = line[7: len(line)-2]
+					print ("imei: ", to_print)
+					que_imei.put(to_print)
 					
-					data_base.connect_DB(line.decode())
+					#print to data-base
+					data_base.connect_DB(to_print, port_num)
 					
 					#close com-port
 					serial_port.close()
