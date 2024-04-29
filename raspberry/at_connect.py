@@ -2,18 +2,10 @@ import serial
 import serial.tools.list_ports
 import time
 import queue 
-
 import tty
 
 command = "ATI+CGSN\r\n"
 start_line = "+CGSN"
-
-#read comports (ttyUSB...)
-def comports_cheak():
-	ports = serial.tools.list_ports.comports()
-	
-	for port in ports:
-		print(port.device)
 
 def close_connect():
 	serial_port.close()
@@ -28,15 +20,13 @@ delta_time = 1
 def at_read_write(que_imei, port_num):
 	global timeout
 	global delta_time
-	#take com-ports list
-	comports_list = tty.GetCHDevices("ttyCH")
 	
 	#open serial conection NON Block (timeout = 0)
-	serial_port = serial.Serial(comports_list[port_num], baudrate, timeout = 0)
+	serial_port = serial.Serial(port_num, baudrate, timeout = 0)
 	
 	if serial_port:
 		#open com-port
-		print ("open port: ", comports_list[port_num])
+		print ("open port: ", port_num)
 		
 		#flush tx and rx buffers
 		serial_port.flushInput()
@@ -83,17 +73,17 @@ def at_read_write(que_imei, port_num):
 					#close com-port
 					serial_port.close()
 					
-					# debug info
-					print (comports_list[port_num], ": conection close")
+					#debug info
+					print (port_num, ": conection close")
 					stop_time = time.perf_counter()
-					print (comports_list[port_num], ": time stop: ", stop_time)
+					print (port_num, ": time stop: ", stop_time)
 					delta = stop_time - start_time
-					print (comports_list[port_num], ": delta ", delta)
+					print (port_num, ": delta ", delta)
 					print ("queue: ", que_imei.qsize())
 					
 					stop_thread = True
 				
-		print ("exit from while")
+		print ("Thread ", port_num, " close")
 	else:
 		print("close")
 
