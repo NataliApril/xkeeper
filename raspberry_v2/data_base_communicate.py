@@ -15,7 +15,7 @@ class DB_actions():
 		finally:
 			if conn:
 				conn.close()
-				print ("stop connection DB")
+				#print ("stop connection DB")
 	
 	''' print data to the table on database '''		
 	def send_data(self, imei, port):

@@ -10,10 +10,6 @@ motor_data = namedtuple('motor_data', ['id', 'acc', 'dec', 'dir', 'speed', 'step
 programmator = namedtuple('programmator', ['id', 'start', 'OK', 'error', 'n1', 'n2', 'n3', 'n4'])
 format_string = '<BBBBHH'
 
-
-
-
-
 class CAN_communicate(): 
 	
 	motor = [23, 10, 10, 0, 0, 0] 

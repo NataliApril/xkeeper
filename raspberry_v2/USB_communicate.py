@@ -46,7 +46,7 @@ class USB_communicate():
 			print ("detected ", len(comports_list), "devices")
 			#start threads for exist com-ports
 			for port in comports_list:
-				dev = Thread(target = at_con, args = (imei_in, port))
+				dev = Thread(target = self.at_con, args = (imei_in, port))
 				dev.deamon = True
 				dev.start()
 		else:
@@ -78,13 +78,13 @@ class USB_communicate():
 			start_time = time.perf_counter()
 			round_time = time.perf_counter()
 			
+			#connect to DB
+			data_base = db.DB_actions()
+			data_base.connect_DB()
+				
 			#read GSM-module
 			while (not stop_thread):			
 				line = serial_port.readline()
-				
-				#connect to DB
-				data_base = db.DB_actions()
-				data_base.connect_DB()
 		
 				#cheak timeout
 				if ((time.perf_counter() - start_time) > timeout):
