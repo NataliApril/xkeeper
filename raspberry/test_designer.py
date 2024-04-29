@@ -8,6 +8,7 @@ from threading import *
 import detect_devices as dd
 import os
 
+
 stop_tread = False
 
 def UI(imei_q):
@@ -32,6 +33,8 @@ def data_in(in_q):
         print ("read CAN")
         dt.take(in_q)
     #os._exit(1)
+    
+   
         
 if __name__ == "__main__":
     q = queue.Queue()
@@ -40,13 +43,17 @@ if __name__ == "__main__":
     t1 = Thread(target = UI, args = (imei, ))
     t2 = Thread(target = data_in, args = (q, ))
     t3 = Thread (target = dd.detect_imei, args = (imei, ))
+    
     t1.deamon = True    #deamon process
     t2.deamon = True    #deamon process
     t3.deamon = True    #deamon process
+    
     t1.start()
     t2.start()
     t3.start()
+
     t3.join()
+    print ("t3 ended")
     t1.join()
     while imei.qsize() > 0:
         print (imei.get())
@@ -54,6 +61,7 @@ if __name__ == "__main__":
     print("thread 1 ended")
     t2.join()
     print("thread 2 ended")
+
     
 
     

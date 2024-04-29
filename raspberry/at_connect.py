@@ -3,6 +3,7 @@ import serial.tools.list_ports
 import time
 import queue 
 import tty
+import db_connect as db
 
 command = "ATI+CGSN\r\n"
 start_line = "+CGSN:"
@@ -46,6 +47,9 @@ def at_read_write(que_imei, port_num):
 		while (not stop_thread):			
 			line = serial_port.readline()
 			
+			#connect to DB
+			data_base = db.DB_actions()
+    
 			#cheak timeout
 			if ((time.perf_counter() - start_time) > timeout):
 				stop_thread = True
@@ -70,6 +74,9 @@ def at_read_write(que_imei, port_num):
 				if (start_line in unicode_string):
 					print ("imei:", line)
 					que_imei.put(line.decode())
+					
+					data_base.connect_DB(line.decode())
+					
 					#close com-port
 					serial_port.close()
 					
