@@ -5,7 +5,7 @@ import queue
 import tty
 
 command = "ATI+CGSN\r\n"
-start_line = "+CGSN"
+start_line = "+CGSN:"
 
 def close_connect():
 	serial_port.close()
