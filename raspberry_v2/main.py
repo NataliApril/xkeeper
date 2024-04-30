@@ -39,11 +39,12 @@ def toggle():
         gpio.write_pin(21, 1, 1)
         gpio.write_pin(21, 0, 1)
         
-def test ():
-    while True:
-        test = UI.Ui_MainWindow()
-        test.GSM("test")
-        time.sleep(1)
+'''def test ():
+    global stop_thread
+    test = UI.Signal()
+    while not stop_thread:
+        test.action()
+        time.sleep(10)'''
         
 def print_cmd():
     cmd = USB.system_cmd()
@@ -60,21 +61,21 @@ if __name__ == "__main__":
     t3 = Thread (target = usb.detect_imei, args = (imei, ))
     t4 = Thread (target = toggle)
     t5 = Thread (target = print_cmd)
-    t6 = Thread(target = test)
+    #t6 = Thread(target = test)
     
     t1.deamon = True    #deamon process
     t2.deamon = True    #deamon process
     t3.deamon = True    #deamon process
     t4.deamon = True
     t5.deamon = True
-    t6.deamon = True
+    #t6.deamon = True
     
     t1.start()
     t2.start()
     t3.start()
     t4.start()
     t5.start()
-    t6.start()
+    #t6.start()
     
     t3.join()
     print ("t3 ended")
@@ -89,8 +90,8 @@ if __name__ == "__main__":
     print ("thread 4 ended")
     t5.join()
     print ("thread 5 ended")
-    t6.join()
-    print ("thread 6 ended")
+    #t6.join()
+    #print ("thread 6 ended")
 
     
 

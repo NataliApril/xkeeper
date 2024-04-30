@@ -5,12 +5,22 @@ import queue
 import random
 import threading
 import CAN_communicate as CAN
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, QtTest
 from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
-class Ui_MainWindow(object):
+def update (signal):
+    while True:
+        n = random.randint(0,100)
+        signal.emit(n)
+        QtTest.QTest.qWait(500)
+    
+class Ui_MainWindow(QMainWindow):
         
     can_ = CAN.CAN_communicate()
+    update_signal = pyqtSignal(int)
     
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -18,7 +28,7 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.Devices = QtWidgets.QTabWidget(self.centralwidget)
-        self.Devices.setGeometry(QtCore.QRect(10, 10, 781, 561))
+        self.Devices.setGeometry(QtCore.QRect(10, 10, 780, 560))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.Devices.setFont(font)
@@ -418,6 +428,9 @@ class Ui_MainWindow(object):
         
         #self.programming.clicked.connect(lambda: self.thread(q))
         
+        self.update_signal.connect(self.GSM)
+        threading.Thread(target = update, args = (self.update_signal, )).start()
+        
         self.programming.clicked.connect(lambda: self.detect())
         self.Step_slider.sliderMoved.connect(lambda: self.update_data("step"))
         self.Speed_slider.sliderMoved.connect(lambda: self.update_data("speed"))
@@ -529,28 +542,14 @@ class Ui_MainWindow(object):
                     
     def detect(self):
         self.started.setText("Started")
-        
-
-    def GSM(self, _str):
-        worker = Worker()
-        worker.update_signal.connect(lambda x: self.gsm_1.setText("GSM: " + x))
-        #self.gsm_1.setText("GSM: " + _str)
-        #sub = "+CGSN: "
-        #if not que.empty:
-        #temp = str(que.get(block = False))
-        #if (temp > sub and len(temp) > len(sub)):
-        #print ("true") 
-        #else:
-        #print("empty")
-        
-
-
-class Worker(QObject):
-    update_signal = pyqtSignal(str)
     
-    def run (self):
-        result = random.radint(0, 10)
-        self.update_signal.emit(result)
+    
+    
+    def GSM(self, value):
+        #count = count + 1
+        self.gsm_1.setText("Test: {}".format(value))
+        
+
         
 '''if __name__ == "__main__":
     import sys
