@@ -13,35 +13,51 @@ from PyQt5.QtCore import *
 
 
 class WorkerThread(QThread):
-    update_test = pyqtSignal(str)
+    update_signal = pyqtSignal(str)
     
     def run(self):
         result_data = "Update data"
-        self.update_test.emit(result_data)
+        self.update_signal.emit(result_data)
         
-
-def update (signal):
+'''def update (signal):
     while True:
         n = random.randint(0,100)
         signal.emit(n)
-        QtTest.QTest.qWait(500)
+        QtTest.QTest.qWait(500)'''
+        
+class DeviceStatus(QtWidgets.QWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.layout = QtWidgets.QGridLayout()
+        self.setLayout(self.layout)
+        
+        self.label_arm = QtWidgets.QLabel("AVR: ")
+        self.label_esp = QtWidgets.QLabel("ESP: ")
+        self.label_gsm = QtWidgets.QLabel("GSM: ")
+        
+        self.layout.addWidget(self.label_arm, 0, 0)
+        self.layout.addWidget(self.label_esp, 1, 0)
+        self.layout.addWidget(self.label_gsm, 2, 0)
+        
+        self.worker_thread = WorkerThread()
+        self.worker_thread.update_signal.connect(self.update_widget)
+        
+    def update_widget(self):
+        count = 0
+        while count < 20:
+            count = count + 1 
+            self.label_arm.setText("AVR: test " + str(count))
+            print ("received data: " + str(count))
+            QtTest.QTest.qWait(500)
+            
+    def start_threading(self):
+        self.worker_thread.start()
+        
     
 class Ui_MainWindow(QMainWindow):
         
     can_ = CAN.CAN_communicate()
     update_signal = pyqtSignal(int)
-    
-    '''def __init__(self):
-        super().__init__()
-        self.worker_thread = WorkerThread()
-        self.worker_thread.update_test(self.update_widgets)
-        
-    def start_thrading(self):
-        self.worker_thread.start()
-
-    def update_widgets(self, data):
-        self.gsm_2.setText("Teeeest")
-        print ("")'''
     
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -54,6 +70,9 @@ class Ui_MainWindow(QMainWindow):
         font.setPointSize(12)
         self.Devices.setFont(font)
         self.Devices.setObjectName("Devices")
+        
+        #tab 1
+        ## top widgets
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.select_version = QtWidgets.QComboBox(self.tab)
@@ -74,7 +93,30 @@ class Ui_MainWindow(QMainWindow):
         self.widget = QtWidgets.QWidget(self.tab)
         self.widget.setGeometry(QtCore.QRect(20, 60, 731, 431))
         self.widget.setObjectName("widget")
+        
+        ### class devices
         self.gridLayout_5 = QtWidgets.QGridLayout(self.widget)
+        self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.dev_1 = DeviceStatus()
+        self.gridLayout_5.addWidget(self.dev_1, 0, 0, 1, 1)
+        self.dev_2 = DeviceStatus()
+        self.gridLayout_5.addWidget(self.dev_2, 0, 1, 1, 1)
+        self.dev_3 = DeviceStatus()
+        self.gridLayout_5.addWidget(self.dev_3, 0, 2, 1, 1)
+        self.dev_4 = DeviceStatus()
+        self.gridLayout_5.addWidget(self.dev_4, 0, 3, 1, 1)
+        self.dev_5 = DeviceStatus()
+        self.gridLayout_5.addWidget(self.dev_5, 1, 0, 1, 1)
+        self.dev_6 = DeviceStatus()
+        self.gridLayout_5.addWidget(self.dev_6, 1, 1, 1, 1)
+        self.dev_7 = DeviceStatus()
+        self.gridLayout_5.addWidget(self.dev_7, 1, 2, 1, 1)
+        self.dev_8 = DeviceStatus()
+        self.gridLayout_5.addWidget(self.dev_8, 1, 3, 1, 1)
+        
+        ## devices
+        '''self.gridLayout_5 = QtWidgets.QGridLayout(self.widget)
         self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.device_1 = QtWidgets.QFrame(self.widget)
@@ -97,6 +139,7 @@ class Ui_MainWindow(QMainWindow):
         self.gsm_1.setObjectName("gsm_1")
         self.verticalLayout.addWidget(self.gsm_1)
         self.gridLayout_5.addWidget(self.device_1, 0, 0, 1, 1)
+        
         self.device_2 = QtWidgets.QFrame(self.widget)
         self.device_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.device_2.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -117,6 +160,8 @@ class Ui_MainWindow(QMainWindow):
         self.gsm_2.setObjectName("gsm_2")
         self.verticalLayout_2.addWidget(self.gsm_2)
         self.gridLayout_5.addWidget(self.device_2, 0, 1, 1, 1)
+        
+        
         self.device_3 = QtWidgets.QFrame(self.widget)
         self.device_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.device_3.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -137,6 +182,8 @@ class Ui_MainWindow(QMainWindow):
         self.gsm_5.setObjectName("gsm_5")
         self.verticalLayout_6.addWidget(self.gsm_5)
         self.gridLayout_5.addWidget(self.device_3, 0, 2, 1, 1)
+        
+        
         self.device_4 = QtWidgets.QFrame(self.widget)
         self.device_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.device_4.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -157,6 +204,8 @@ class Ui_MainWindow(QMainWindow):
         self.gsm_8.setObjectName("gsm_8")
         self.verticalLayout_9.addWidget(self.gsm_8)
         self.gridLayout_5.addWidget(self.device_4, 0, 3, 1, 1)
+        
+        
         self.device_5 = QtWidgets.QFrame(self.widget)
         self.device_5.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.device_5.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -177,6 +226,8 @@ class Ui_MainWindow(QMainWindow):
         self.gsm_9.setObjectName("gsm_9")
         self.verticalLayout_10.addWidget(self.gsm_9)
         self.gridLayout_5.addWidget(self.device_5, 1, 0, 1, 1)
+        
+        
         self.device_6 = QtWidgets.QFrame(self.widget)
         self.device_6.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.device_6.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -197,6 +248,8 @@ class Ui_MainWindow(QMainWindow):
         self.gsm_10.setObjectName("gsm_10")
         self.verticalLayout_11.addWidget(self.gsm_10)
         self.gridLayout_5.addWidget(self.device_6, 1, 1, 1, 1)
+        
+        
         self.device_7 = QtWidgets.QFrame(self.widget)
         self.device_7.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.device_7.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -217,6 +270,8 @@ class Ui_MainWindow(QMainWindow):
         self.gsm_11.setObjectName("gsm_11")
         self.verticalLayout_12.addWidget(self.gsm_11)
         self.gridLayout_5.addWidget(self.device_7, 1, 2, 1, 1)
+        
+        
         self.device_8 = QtWidgets.QFrame(self.widget)
         self.device_8.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.device_8.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -236,8 +291,10 @@ class Ui_MainWindow(QMainWindow):
         self.gsm_12 = QtWidgets.QLabel(self.verticalLayoutWidget_12)
         self.gsm_12.setObjectName("gsm_12")
         self.verticalLayout_13.addWidget(self.gsm_12)
-        self.gridLayout_5.addWidget(self.device_8, 1, 3, 1, 1)
+        self.gridLayout_5.addWidget(self.device_8, 1, 3, 1, 1)'''
         self.Devices.addTab(self.tab, "")
+        
+        #tab 2
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
         self.change_value = QtWidgets.QLabel(self.tab_2)
@@ -449,8 +506,8 @@ class Ui_MainWindow(QMainWindow):
         
         #self.programming.clicked.connect(lambda: self.thread(q))
         
-        self.update_signal.connect(self.GSM)
-        threading.Thread(target = update, args = (self.update_signal, )).start()
+        '''self.update_signal.connect(self.GSM)
+        threading.Thread(target = update, args = (self.update_signal, )).start()'''
         
         self.programming.clicked.connect(lambda: self.detect())
         self.Step_slider.sliderMoved.connect(lambda: self.update_data("step"))
@@ -480,7 +537,7 @@ class Ui_MainWindow(QMainWindow):
         self.version.setToolTip(_translate("MainWindow", "<html><head/><body><p align=\"center\"><br/></p></body></html>"))
         self.version.setText(_translate("MainWindow", "Выбор прошивки:"))
         self.pushButton.setText(_translate("MainWindow", "Srart programming"))
-        self.avr_1.setText(_translate("MainWindow", "AVR:"))
+        '''self.avr_1.setText(_translate("MainWindow", "AVR:"))
         self.esp_1.setText(_translate("MainWindow", "ESP:"))
         self.gsm_1.setText(_translate("MainWindow", "GSM:"))
         self.avr_2.setText(_translate("MainWindow", "AVR:"))
@@ -503,7 +560,7 @@ class Ui_MainWindow(QMainWindow):
         self.gsm_11.setText(_translate("MainWindow", "GSM:"))
         self.avr_13.setText(_translate("MainWindow", "AVR:"))
         self.esp_13.setText(_translate("MainWindow", "ESP:"))
-        self.gsm_12.setText(_translate("MainWindow", "GSM:"))
+        self.gsm_12.setText(_translate("MainWindow", "GSM:"))'''
         self.Devices.setTabText(self.Devices.indexOf(self.tab), _translate("MainWindow", "Devices"))
         self.change_value.setText(_translate("MainWindow", "Change value"))
         self.current_value.setText(_translate("MainWindow", "Current value"))
@@ -565,18 +622,15 @@ class Ui_MainWindow(QMainWindow):
         self.started.setText("Started")
     
     
-    
-    def GSM(self, value):
+    '''def GSM(self, value):
         #count = count + 1
-        self.gsm_1.setText("Test: {}".format(value))
+        self.gsm_1.setText("Test: {}".format(value))'''
         
-
-        
-'''if __name__ == "__main__":
+if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    sys.exit(app.exec_())'''
+    sys.exit(app.exec_())
