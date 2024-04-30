@@ -2,9 +2,11 @@ import re
 import sys
 import time
 import queue 
+import random
 import threading
 import CAN_communicate as CAN
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QObject, pyqtSignal
 
 class Ui_MainWindow(object):
         
@@ -530,7 +532,9 @@ class Ui_MainWindow(object):
         
 
     def GSM(self, _str):
-        self.gsm_1.setText("GSM: " + _str)
+        worker = Worker()
+        worker.update_signal.connect(lambda x: self.gsm_1.setText("GSM: " + x))
+        #self.gsm_1.setText("GSM: " + _str)
         #sub = "+CGSN: "
         #if not que.empty:
         #temp = str(que.get(block = False))
@@ -538,6 +542,15 @@ class Ui_MainWindow(object):
         #print ("true") 
         #else:
         #print("empty")
+        
+
+
+class Worker(QObject):
+    update_signal = pyqtSignal(str)
+    
+    def run (self):
+        result = random.radint(0, 10)
+        self.update_signal.emit(result)
         
 '''if __name__ == "__main__":
     import sys
