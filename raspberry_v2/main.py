@@ -2,7 +2,7 @@ import os
 import sys
 import queue 
 import time
-import UI as UI
+import UI_2 as UI
 from threading import *
 import USB_communicate as USB
 import CAN_communicate as CAN

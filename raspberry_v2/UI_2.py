@@ -46,9 +46,12 @@ class DeviceStatus(QtWidgets.QWidget):
         count = 0
         while count < 20:
             count = count + 1 
+            res = random.randint(0, 20)
             self.label_arm.setText("AVR: test " + str(count))
-            print ("received data: " + str(count))
-            QtTest.QTest.qWait(500)
+            self.label_esp.setText("ESP: test " + str(20 - count))
+            self.label_gsm.setText("GSM: test " + str(100 - count))
+            #print ("received data: " + str(count))
+            QtTest.QTest.qWait(1000)
             
     def start_threading(self):
         self.worker_thread.start()
@@ -114,6 +117,15 @@ class Ui_MainWindow(QMainWindow):
         self.gridLayout_5.addWidget(self.dev_7, 1, 2, 1, 1)
         self.dev_8 = DeviceStatus()
         self.gridLayout_5.addWidget(self.dev_8, 1, 3, 1, 1)
+        
+        self.dev_1.start_threading()
+        self.dev_2.start_threading()
+        self.dev_3.start_threading()
+        self.dev_4.start_threading()
+        self.dev_5.start_threading()
+        self.dev_6.start_threading()
+        self.dev_7.start_threading()
+        self.dev_8.start_threading()
         
         ## devices
         '''self.gridLayout_5 = QtWidgets.QGridLayout(self.widget)
@@ -626,11 +638,11 @@ class Ui_MainWindow(QMainWindow):
         #count = count + 1
         self.gsm_1.setText("Test: {}".format(value))'''
         
-if __name__ == "__main__":
+'''if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec_())'''
