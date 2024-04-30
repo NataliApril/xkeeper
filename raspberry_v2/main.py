@@ -2,8 +2,8 @@ import os
 import sys
 import queue 
 import time
-from threading import *
 import UI as UI
+from threading import *
 import USB_communicate as USB
 import CAN_communicate as CAN
 import GPIO_communicate as GPIO
@@ -38,6 +38,10 @@ def toggle():
     while not stop_thread:
         gpio.write_pin(21, 1, 1)
         gpio.write_pin(21, 0, 1)
+        
+def print_cmd():
+    cmd = USB.system_cmd()
+    cmd.upload_file("esp8266", "/dev/ttyUSB0", "115200")
     
 if __name__ == "__main__":
     q = queue.Queue()
@@ -48,25 +52,19 @@ if __name__ == "__main__":
     t1 = Thread(target = UI_thread, args = (imei, ))
     t2 = Thread(target = data_in, args = (q, ))
     t3 = Thread (target = usb.detect_imei, args = (imei, ))
-    
     t4 = Thread (target = toggle)
-    
-    t5 = Thread (target = usb.system_cmd, args= ("esptool.py --chip esp8266 --baud 115200 --port /dev/ttyUSB0 write_flash -z 0x0 /home/user/xkeeper/sketch_may06a/sketch_may06a.ino.esp8285.bin", ))
+    t5= Thread (target = print_cmd)
     
     t1.deamon = True    #deamon process
     t2.deamon = True    #deamon process
     t3.deamon = True    #deamon process
-    
     t4.deamon = True
-    
     t5.deamon = True
     
     t1.start()
     t2.start()
     t3.start()
-    
     t4.start()
-
     t5.start()
     
     t3.join()

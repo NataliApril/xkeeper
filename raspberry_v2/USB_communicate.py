@@ -132,9 +132,28 @@ class USB_communicate():
 			print ("Thread ", port_num, " close")
 		else:
 			print("close")
-			
-	def system_cmd(self, cmd):
-		os.system(cmd)
+	
+	
+''' system cmd for ESP '''	
+class system_cmd():
+	''' cheak ESP chip '''
+	def cheak_chip(self):
+		return os.system("esptool.py --port /dev/ttyUSB0 chip_id")
+	
+	''' upload file to ESP '''
+	def upload_file(self, chip, port, baud):
+		f = open('path_to_file.txt', 'r')
+		try:
+			path = f.readline()
+			print ("path to file:", path)
+			f.close()
+			finish_upload = False
+			os.system ("esptool.py --chip " + str(chip) + " --port " + str(port) + " --baud " + str(baud) + " write_flash -z 0x00 " + path)
+			finish_upload = True
+			print ("finish upload")
+		finally:
+			f.close()
+		
 
 
 
