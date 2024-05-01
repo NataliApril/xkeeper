@@ -19,7 +19,7 @@ def UI_thread(imei_q):
     app = UI.QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = UI.Ui_MainWindow()
-    ui.setupUi(MainWindow, imei_q)
+    ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
     print ("stop UI")
@@ -57,30 +57,30 @@ if __name__ == "__main__":
     q = queue.Queue()
     #imei = queue.Queue()
     can_pack = queue.Queue()
-    usb = USB.USB_communicate()
+    #usb = USB.USB_communicate()
     
     t1 = Thread(target = UI_thread, args = (imei, ))
     t2 = Thread(target = data_in, args = (q, ))
-    t3 = Thread (target = usb.detect_imei, args = (imei, ))
+    #t3 = Thread (target = usb.detect_imei, args = (imei, ))
     t4 = Thread (target = toggle)
     t5 = Thread (target = print_cmd)
     #t6 = Thread(target = test)
     
     t1.deamon = True    #deamon process
     t2.deamon = True    #deamon process
-    t3.deamon = True    #deamon process
+    #t3.deamon = True    #deamon process
     t4.deamon = True
     t5.deamon = True
     #t6.deamon = True
     
     t1.start()
     t2.start()
-    t3.start()
+    #t3.start()
     t4.start()
     t5.start()
     #t6.start()
     
-    t3.join()
+    #t3.join()
     print ("t3 ended")
     t1.join()
     while imei.qsize() > 0:

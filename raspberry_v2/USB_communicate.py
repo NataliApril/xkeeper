@@ -14,6 +14,7 @@ timeout = 5				#timeout 5 sec
 delta_time = 1
 
 class USB_communicate():
+
 	''' close USB connection ''' 
 	def close_connect(self):
 		serial_port.close()
@@ -32,31 +33,32 @@ class USB_communicate():
 		return usb_devices
 	
 	''' function for start thread '''
-	def at_con(self, imei_que, com_num):
+	def at_con(self, com_num):
 		print ("Thread AT communicate start", com_num)
-		self.at_read_write(imei_que, com_num)
+		self.at_read_write(com_num)
 
 	''' detect imei '''
-	def detect_imei(self, imei_in):  
+	def detect_ports(self, _str):  
 		time.sleep(1)
 		#take com-ports list
-		comports_list = self.GetCHDevices("ttyCH")
+		comports_list = self.GetCHDevices(_str)
 		
 		if comports_list:
 			print ("detected ", len(comports_list), "devices")
 			#start threads for exist com-ports
-			for port in comports_list:
+			'''for port in comports_list:
 				dev = Thread(target = self.at_con, args = (imei_in, port))
 				dev.deamon = True
-				dev.start()
+				dev.start()'''
 		else:
 			print ("comports list is empty")
+		return comports_list
 	
 	''' read IMEI from modem '''		 
-	def at_read_write(self, que_imei, port_num):
+	def at_read_write(self, port_num):
 		global timeout
 		global delta_time
-		
+		to_print = 0
 		#open serial conection NON Block (timeout = 0)
 		serial_port = serial.Serial(port_num, baudrate, timeout = 0)
 		
@@ -111,8 +113,8 @@ class USB_communicate():
 						#print ("imei:", line)
 						to_print = line[7: len(line)-2]
 						print ("imei: ", to_print)
-						to_print_with_port = (port_num, to_print)
-						que_imei.put(to_print_with_port)
+						#to_print_with_port = (port_num, to_print)
+						#que_imei.put(to_print_with_port)
 						
 						#print to data-base
 						data_base.send_data(to_print, port_num)
@@ -126,14 +128,16 @@ class USB_communicate():
 						print (port_num, ": time stop: ", stop_time)
 						delta = stop_time - start_time
 						print (port_num, ": delta ", delta)
-						print ("queue: ", que_imei.qsize())
+						#print ("queue: ", que_imei.qsize())
 						
 						stop_thread = True
-					
+									
 			print ("Thread ", port_num, " close")
 		else:
 			print("close")
-	
+			to_print = 0
+			
+		return to_print
 	
 ''' system cmd for ESP '''	
 class system_cmd():

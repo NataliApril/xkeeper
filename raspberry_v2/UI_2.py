@@ -5,18 +5,15 @@ import queue
 import random
 from threading import *
 import CAN_communicate as CAN
+import USB_communicate as USB
 from PyQt5 import QtCore, QtGui, QtWidgets, QtTest
 from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from main import imei
-'''if imei.qsize() > 0:
-    while imei.qsize() > 0:
-        print (imei.get())
-else:
-    print ("empty")'''
+usb = USB.USB_communicate()
+
 
 class WorkerThread(QThread):
     update_signal = pyqtSignal(str)
@@ -27,7 +24,8 @@ class WorkerThread(QThread):
         
 
 class DeviceStatus(QtWidgets.QWidget):
-    def __init__(self, data):
+        
+    def __init__(self, port_num):
         super().__init__()
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
@@ -43,55 +41,36 @@ class DeviceStatus(QtWidgets.QWidget):
         self.worker_thread = WorkerThread()
         self.worker_thread.update_signal.connect(self.update_widget)
         
-        self.data_in_f = data
-        print (self.data_in_f)
+        '''timer = QTimer(self)
+        timer.timeout.connect(self.showTime)
+        timer.start(100)'''
         
         self.start = True
-        print ("start = ", self.start)
         self.count = 100
-        self.label_gsm.setText(str(self.count / 10) + " s")
         
-        timer = QTimer(self)
-        timer.timeout.connect(self.showTime)
-        timer.start(100)
+        res = usb.at_read_write(port_num)
+        print ("port: ", port_num, " imei: ", res)
+        self.label_gsm.setText(str(res))
         
     def update_widget(self, avr_status, esp_status):
-        global stop_thread 
-        
-        #count = 0
-        while not stop_thread:
-            #count = count + 1 
-            #res = random.randint(0, 20)
-            self.label_arm.setText("AVR: test " + str(avr_status))
-            self.label_esp.setText("ESP: test " + str(esp_status))
-            #print ("!!!!!!!!!!!!!!!!!", imei.qsize(), "queue size")
-            '''if imei.qsize() > 0:
-                res = imei.get()
-            else:
-                res = "None"
-            self.label_gsm.setText("GSM: test " + str(res))'''
-            #print ("received data: " + str(count))
-            QtTest.QTest.qWait(100)
+        #while not stop_thread:
+        self.label_arm.setText("AVR: test " + str(avr_status))
+        self.label_esp.setText("ESP: test " + str(esp_status))
+        QtTest.QTest.qWait(100)
     
     def showTime(self):
-        global imei
-        '''if imei.qsize() > 0:
-            print("qsize not empty", imei.qsize())
-        else:
-            print ("empty")'''
         if self.start:
             self.count -= 1
             if self.count == 0:
                 self.start = False
                 if (self.data_in_f.qsize() > 0):
-                    self.label_gsm.setText(str(self.data_in_f.get()[1]))
+                    self.label_gsm.setText(str(self.res))
                 else:
                     self.label_gsm.setText("None")
                 
         if self.start:
             text = str(self.count / 10) + " s"
             self.label_gsm.setText(text)
-            #print ("queue size = ", imei.qsize())
                         
     
 class Ui_MainWindow(QMainWindow):
@@ -100,7 +79,7 @@ class Ui_MainWindow(QMainWindow):
     update_signal = pyqtSignal(int)
     
      
-    def setupUi(self, MainWindow, data):
+    def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1200, 800)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -136,10 +115,29 @@ class Ui_MainWindow(QMainWindow):
         self.widget.setObjectName("widget")
         
         ### class devices
+        
         self.gridLayout_5 = QtWidgets.QGridLayout(self.widget)
         self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_5.setObjectName("gridLayout_5")
-        self.dev_1 = DeviceStatus(data)
+        
+        comports = usb.detect_ports("ttyCH")
+        
+        grid_list = [[0, 0, 1, 1], [0, 1, 1, 1],
+                     [0, 2, 1, 1], [0, 3, 1, 1],
+                     [1, 0, 1, 1], [1, 1, 1, 1],
+                     [1, 2, 1, 1], [1, 3, 1, 1]]
+        
+        if comports:
+            count = 0
+            for port in comports:
+                self.dev = DeviceStatus(port)
+                self.gridLayout_5.addWidget(self.dev, grid_list[count][0], grid_list[count][1], grid_list[count][2], grid_list[count][3])
+                count += 1
+                #widget = Thread (target = self.dev.update_widget, args = (0, 0))
+                #widget.deamon = True
+                #widget.start()
+                
+        '''self.dev_1 = DeviceStatus(data)
         self.gridLayout_5.addWidget(self.dev_1, 0, 0, 1, 1)
         self.dev_2 = DeviceStatus(data)
         self.gridLayout_5.addWidget(self.dev_2, 0, 1, 1, 1)
@@ -168,7 +166,7 @@ class Ui_MainWindow(QMainWindow):
         
             widget = Thread (target = device.update_widget, args = (0, 0))
             widget.deamon = True
-            widget.start()
+            widget.start()'''
         
         self.Devices.addTab(self.tab, "")
         
@@ -398,10 +396,6 @@ class Ui_MainWindow(QMainWindow):
         self.Devices.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
-        
-    
-            
-        
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -472,15 +466,5 @@ class Ui_MainWindow(QMainWindow):
         self.started.setText("Started")
     
     
-    '''def GSM(self, value):
-        #count = count + 1
-        self.gsm_1.setText("Test: {}".format(value))'''
+    #def devices_data():
         
-'''if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())'''
