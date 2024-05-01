@@ -10,13 +10,16 @@ import GPIO_communicate as GPIO
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 stop_thread = False
+q = queue.Queue()
+imei = queue.Queue()
+can_pack = queue.Queue()
 
 def UI_thread(imei_q):
     global flag_end
     app = UI.QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = UI.Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    ui.setupUi(MainWindow, imei_q)
     MainWindow.show()
     sys.exit(app.exec_())
     print ("stop UI")
@@ -52,7 +55,7 @@ def print_cmd():
     
 if __name__ == "__main__":
     q = queue.Queue()
-    imei = queue.Queue()
+    #imei = queue.Queue()
     can_pack = queue.Queue()
     usb = USB.USB_communicate()
     
@@ -81,7 +84,8 @@ if __name__ == "__main__":
     print ("t3 ended")
     t1.join()
     while imei.qsize() > 0:
-        print (imei.get())
+        print ("queue elenment: ", imei.get())
+    print ("!!!!!!!!!!!")
     stop_thread = True
     print("thread 1 ended")
     t2.join()

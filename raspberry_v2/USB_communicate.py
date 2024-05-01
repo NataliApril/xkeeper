@@ -111,7 +111,8 @@ class USB_communicate():
 						#print ("imei:", line)
 						to_print = line[7: len(line)-2]
 						print ("imei: ", to_print)
-						que_imei.put(to_print)
+						to_print_with_port = (port_num, to_print)
+						que_imei.put(to_print_with_port)
 						
 						#print to data-base
 						data_base.send_data(to_print, port_num)

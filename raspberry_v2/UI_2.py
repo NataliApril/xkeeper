@@ -11,6 +11,12 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+from main import imei
+'''if imei.qsize() > 0:
+    while imei.qsize() > 0:
+        print (imei.get())
+else:
+    print ("empty")'''
 
 class WorkerThread(QThread):
     update_signal = pyqtSignal(str)
@@ -19,15 +25,10 @@ class WorkerThread(QThread):
         result_data = "Update data"
         self.update_signal.emit(result_data)
         
-'''def update (signal):
-    while True:
-        n = random.randint(0,100)
-        signal.emit(n)
-        QtTest.QTest.qWait(500)'''
-        
+
 class DeviceStatus(QtWidgets.QWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, data):
+        super().__init__()
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
         
@@ -42,33 +43,70 @@ class DeviceStatus(QtWidgets.QWidget):
         self.worker_thread = WorkerThread()
         self.worker_thread.update_signal.connect(self.update_widget)
         
-    def update_widget(self):
-        count = 0
-        while count < 20:
-            count = count + 1 
-            res = random.randint(0, 20)
-            self.label_arm.setText("AVR: test " + str(count))
-            self.label_esp.setText("ESP: test " + str(20 - count))
-            self.label_gsm.setText("GSM: test " + str(100 - count))
-            #print ("received data: " + str(count))
-            QtTest.QTest.qWait(1000)
-            
-    def start_threading(self):
-        self.worker_thread.start()
+        self.data_in_f = data
+        print (self.data_in_f)
         
+        self.start = True
+        print ("start = ", self.start)
+        self.count = 100
+        self.label_gsm.setText(str(self.count / 10) + " s")
+        
+        timer = QTimer(self)
+        timer.timeout.connect(self.showTime)
+        timer.start(100)
+        
+    def update_widget(self, avr_status, esp_status):
+        global stop_thread 
+        
+        #count = 0
+        while not stop_thread:
+            #count = count + 1 
+            #res = random.randint(0, 20)
+            self.label_arm.setText("AVR: test " + str(avr_status))
+            self.label_esp.setText("ESP: test " + str(esp_status))
+            #print ("!!!!!!!!!!!!!!!!!", imei.qsize(), "queue size")
+            '''if imei.qsize() > 0:
+                res = imei.get()
+            else:
+                res = "None"
+            self.label_gsm.setText("GSM: test " + str(res))'''
+            #print ("received data: " + str(count))
+            QtTest.QTest.qWait(100)
+    
+    def showTime(self):
+        global imei
+        '''if imei.qsize() > 0:
+            print("qsize not empty", imei.qsize())
+        else:
+            print ("empty")'''
+        if self.start:
+            self.count -= 1
+            if self.count == 0:
+                self.start = False
+                if (self.data_in_f.qsize() > 0):
+                    self.label_gsm.setText(str(self.data_in_f.get()[1]))
+                else:
+                    self.label_gsm.setText("None")
+                
+        if self.start:
+            text = str(self.count / 10) + " s"
+            self.label_gsm.setText(text)
+            #print ("queue size = ", imei.qsize())
+                        
     
 class Ui_MainWindow(QMainWindow):
         
     can_ = CAN.CAN_communicate()
     update_signal = pyqtSignal(int)
     
-    def setupUi(self, MainWindow):
+     
+    def setupUi(self, MainWindow, data):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(1200, 800)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.Devices = QtWidgets.QTabWidget(self.centralwidget)
-        self.Devices.setGeometry(QtCore.QRect(10, 10, 780, 560))
+        self.Devices.setGeometry(QtCore.QRect(10, 10, 1160, 780))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.Devices.setFont(font)
@@ -88,7 +126,7 @@ class Ui_MainWindow(QMainWindow):
         self.version.setGeometry(QtCore.QRect(10, 20, 151, 20))
         self.version.setObjectName("version")
         self.dateTimeEdit = QtWidgets.QDateTimeEdit(self.tab)
-        self.dateTimeEdit.setGeometry(QtCore.QRect(560, 10, 194, 31))
+        self.dateTimeEdit.setGeometry(QtCore.QRect(700, 10, 194, 31))
         self.dateTimeEdit.setObjectName("dateTimeEdit")
         self.pushButton = QtWidgets.QPushButton(self.tab)
         self.pushButton.setGeometry(QtCore.QRect(340, 10, 171, 31))
@@ -101,43 +139,36 @@ class Ui_MainWindow(QMainWindow):
         self.gridLayout_5 = QtWidgets.QGridLayout(self.widget)
         self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_5.setObjectName("gridLayout_5")
-        self.dev_1 = DeviceStatus()
+        self.dev_1 = DeviceStatus(data)
         self.gridLayout_5.addWidget(self.dev_1, 0, 0, 1, 1)
-        self.dev_2 = DeviceStatus()
+        self.dev_2 = DeviceStatus(data)
         self.gridLayout_5.addWidget(self.dev_2, 0, 1, 1, 1)
-        self.dev_3 = DeviceStatus()
+        self.dev_3 = DeviceStatus(data)
         self.gridLayout_5.addWidget(self.dev_3, 0, 2, 1, 1)
-        self.dev_4 = DeviceStatus()
+        self.dev_4 = DeviceStatus(data)
         self.gridLayout_5.addWidget(self.dev_4, 0, 3, 1, 1)
-        self.dev_5 = DeviceStatus()
+        self.dev_5 = DeviceStatus(data)
         self.gridLayout_5.addWidget(self.dev_5, 1, 0, 1, 1)
-        self.dev_6 = DeviceStatus()
+        self.dev_6 = DeviceStatus(data)
         self.gridLayout_5.addWidget(self.dev_6, 1, 1, 1, 1)
-        self.dev_7 = DeviceStatus()
+        self.dev_7 = DeviceStatus(data)
         self.gridLayout_5.addWidget(self.dev_7, 1, 2, 1, 1)
-        self.dev_8 = DeviceStatus()
+        self.dev_8 = DeviceStatus(data)
         self.gridLayout_5.addWidget(self.dev_8, 1, 3, 1, 1)
         
+        #device-widgets list
         device_list = [self.dev_1, self.dev_2,
-                         self.dev_3, self.dev_4,
-                         self.dev_5, self.dev_6,
-                         self.dev_7, self.dev_8]
-                         
+                       self.dev_3, self.dev_4,
+                       self.dev_5, self.dev_6,
+                       self.dev_7, self.dev_8]
+        
+        #start update device-widgets (self thread)    
+        
         for device in device_list:
-            widget = Thread (target = device.update_widget)
+        
+            widget = Thread (target = device.update_widget, args = (0, 0))
             widget.deamon = True
             widget.start()
-        
-        '''self.dev_1.start_threading()
-        self.dev_2.start_threading()
-        self.dev_3.start_threading()
-        self.dev_4.start_threading()
-        self.dev_5.start_threading()
-        self.dev_6.start_threading()
-        self.dev_7.start_threading()
-        self.dev_8.start_threading()'''
-        
-        ## devices
         
         self.Devices.addTab(self.tab, "")
         
@@ -342,19 +373,11 @@ class Ui_MainWindow(QMainWindow):
         self.dec_val.setText("DEC val: " + str(value))
         can_.motor[2] = value
         
-        #######   action on click button   ######
-        #can_data = queue.Queue()
-        
         self.sendButton.clicked.connect(lambda: can_.producer("motor"))
         self.startButton.clicked.connect(lambda: can_.producer("start_run", ))
         self.startButton_2.clicked.connect(lambda: can_.producer("start_move"))
         self.stepButton.clicked.connect(lambda: can_.producer("stop"))
         self.programming.clicked.connect(lambda: can_.producer("programm"))
-        
-        #self.programming.clicked.connect(lambda: self.thread(q))
-        
-        '''self.update_signal.connect(self.GSM)
-        threading.Thread(target = update, args = (self.update_signal, )).start()'''
         
         self.programming.clicked.connect(lambda: self.detect())
         self.Step_slider.sliderMoved.connect(lambda: self.update_data("step"))
@@ -374,7 +397,11 @@ class Ui_MainWindow(QMainWindow):
         self.retranslateUi(MainWindow)
         self.Devices.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
+        
+        
+    
+            
+        
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -384,30 +411,6 @@ class Ui_MainWindow(QMainWindow):
         self.version.setToolTip(_translate("MainWindow", "<html><head/><body><p align=\"center\"><br/></p></body></html>"))
         self.version.setText(_translate("MainWindow", "Выбор прошивки:"))
         self.pushButton.setText(_translate("MainWindow", "Srart programming"))
-        '''self.avr_1.setText(_translate("MainWindow", "AVR:"))
-        self.esp_1.setText(_translate("MainWindow", "ESP:"))
-        self.gsm_1.setText(_translate("MainWindow", "GSM:"))
-        self.avr_2.setText(_translate("MainWindow", "AVR:"))
-        self.esp_2.setText(_translate("MainWindow", "ESP:"))
-        self.gsm_2.setText(_translate("MainWindow", "GSM:"))
-        self.avr_6.setText(_translate("MainWindow", "AVR:"))
-        self.esp_5.setText(_translate("MainWindow", "ESP:"))
-        self.gsm_5.setText(_translate("MainWindow", "GSM:"))
-        self.avr_9.setText(_translate("MainWindow", "AVR:"))
-        self.esp_9.setText(_translate("MainWindow", "ESP:"))
-        self.gsm_8.setText(_translate("MainWindow", "GSM:"))
-        self.avr_10.setText(_translate("MainWindow", "AVR:"))
-        self.esp_10.setText(_translate("MainWindow", "ESP:"))
-        self.gsm_9.setText(_translate("MainWindow", "GSM:"))
-        self.avr_11.setText(_translate("MainWindow", "AVR:"))
-        self.esp_11.setText(_translate("MainWindow", "ESP:"))
-        self.gsm_10.setText(_translate("MainWindow", "GSM:"))
-        self.avr_12.setText(_translate("MainWindow", "AVR:"))
-        self.esp_12.setText(_translate("MainWindow", "ESP:"))
-        self.gsm_11.setText(_translate("MainWindow", "GSM:"))
-        self.avr_13.setText(_translate("MainWindow", "AVR:"))
-        self.esp_13.setText(_translate("MainWindow", "ESP:"))
-        self.gsm_12.setText(_translate("MainWindow", "GSM:"))'''
         self.Devices.setTabText(self.Devices.indexOf(self.tab), _translate("MainWindow", "Devices"))
         self.change_value.setText(_translate("MainWindow", "Change value"))
         self.current_value.setText(_translate("MainWindow", "Current value"))
