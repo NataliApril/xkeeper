@@ -13,7 +13,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 usb = USB.USB_communicate()
-
+system = USB.system_cmd()
 
 class WorkerThread(QThread):
     update_signal_avr = pyqtSignal(int)
@@ -24,8 +24,8 @@ class WorkerThread(QThread):
         result_data1 = random.randint(0, 22)
         self.update_signal_avr.emit(result_data1)
         
-    def wait_esp(self):
-        result_data2 = random.randint(23, 44)
+    def wait_esp(self, port):
+        result_data2 = system.cheak_chip(port)
         self.update_signal_esp.emit(result_data2)
         
     def wait_imei(self, port):
@@ -35,7 +35,7 @@ class WorkerThread(QThread):
 
 class DeviceStatus(QtWidgets.QWidget):
         
-    def __init__(self, port_num = "empty", port_id = None):
+    def __init__(self, esp_com = "empty", port_num = "empty", port_id = None):
         super().__init__()
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
@@ -68,21 +68,13 @@ class DeviceStatus(QtWidgets.QWidget):
         else:
             self.usb_port.setText(str(port_num))
             
-        t = Thread (target = self.worker_thread.wait_imei, args = (port_num, ))
-        t.deamon = True
-        t.start()
-        #t.join()
-        '''timer = QTimer(self)
-        timer.timeout.connect(self.showStatus)
-        timer.start(100)
+        t1 = Thread (target = self.worker_thread.wait_imei, args = (port_num, ))
+        t1.deamon = True
+        t1.start()
         
-        timer = QTimer(self)
-        timer.timeout.connect(self.update_all)
-        timer.start(100)'''
-        
-        #res = usb.at_read_write(port_num)
-        #print ("port: ", port_num, " imei: ", res)
-        #self.label_gsm.setText(str(res))
+        t2 = Thread (target = self.worker_thread.wait_esp, args = (esp_com, ))
+        t2.deamon = True
+        t2.start()
         
     def update_widget(self, avr_status, esp_status, gsm_status):
         #while not stop_thread:
@@ -102,45 +94,6 @@ class DeviceStatus(QtWidgets.QWidget):
     def update_gsm(self, gsm_status):
         self.label_gsm.setText("GSM: " + str(gsm_status))
         QtTest.QTest.qWait(100)
-        
-    def update_all(self, avr, esp, gsm):
-        #self.avr_status += 1
-        #self.esp_status += 2
-        #self.gsm_status += 3
-        n1 = random.randint(0, 10)
-        n2 = random.randint(11, 20)
-        n3 = random.randint(21, 30)
-        avr.emit(n1)
-        esp.emit(n2)
-        gsm.emit(n3)
-        #self.update_processor(self.avr_status)
-        #self.update_esp(self.esp_status)
-        #self.update_gsm(self.gsm_status)
-        QtTest.QTest.qWait(100)
-        
-    '''self.start = True
-     self.count = 100
-     
-     def showStatus(self):
-        comports = usb.detect_ports("ttyCH")
-        if comports:
-            self.label_gsm.setText("Detected!")
-        else:
-            self.label_gsm.setText("Empty!!")
-            
-            
-        if self.start:
-            self.count -= 1
-            if self.count == 0:
-                self.start = False
-                self.label_gsm.setText("Stop")
-                if (self.data_in_f.qsize() > 0):
-                    self.label_gsm.setText("Stop")
-                else:
-                    self.label_gsm.setText("None")
-        if self.start:
-            text = str(self.count / 10) + " s"
-            self.label_gsm.setText(text)'''
                         
     
 class Ui_MainWindow(QMainWindow):
@@ -191,34 +144,23 @@ class Ui_MainWindow(QMainWindow):
         
         comports = usb.detect_ports("ttyCH")
         
+        esp_com = ["/dev/ttyUSB0", "/dev/ttyUSB1",
+                   "/dev/ttyUSB2", "/dev/ttyUSB3",
+                   "/dev/ttyUSB4", "/dev/ttyUSB5",
+                   "/dev/ttyUSB6", "/dev/ttyUSB7"]
+        
         grid_list = [[0, 0, 1, 1], [0, 1, 1, 1],
                      [0, 2, 1, 1], [0, 3, 1, 1],
                      [1, 0, 1, 1], [1, 1, 1, 1],
                      [1, 2, 1, 1], [1, 3, 1, 1]]
         
-
         for id_dev in range(0,8):
             if comports[id_dev]:
-                self.dev = DeviceStatus(comports[id_dev], id_dev)
+                self.dev = DeviceStatus(esp_com[id_dev], comports[id_dev], id_dev)
             else:
                 self.dev = DeviceStatus(port_id = id_dev)
             self.gridLayout_5.addWidget(self.dev, grid_list[id_dev][0], grid_list[id_dev][1], grid_list[id_dev][2], grid_list[id_dev][3])
-            #widget = Thread (target = self.dev.worker_thread.run)
-            #widget.deamon = True
-            #widget.start()
            
-            
-        
-        '''if comports:
-            count = 0
-            for port in comports:
-                self.dev = DeviceStatus(port)
-                self.gridLayout_5.addWidget(self.dev, grid_list[count][0], grid_list[count][1], grid_list[count][2], grid_list[count][3])
-                count += 1
-                #widget = Thread (target = self.dev.update_widget, args = (0, 0))
-                #widget.deamon = True
-                #widget.start()'''
-        
         self.Devices.addTab(self.tab, "")
         
         #tab 2

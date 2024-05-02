@@ -143,8 +143,8 @@ class USB_communicate():
 ''' system cmd for ESP '''	
 class system_cmd():
 	''' cheak ESP chip '''
-	def cheak_chip(self):
-		return os.system("esptool.py --port /dev/ttyUSB0 chip_id")
+	def cheak_chip(self, port):
+		return os.system("esptool.py --port " + str(port) + " chip_id")
 	
 	''' upload file to ESP '''
 	def upload_file(self, chip, port, baud):
