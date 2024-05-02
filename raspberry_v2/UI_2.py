@@ -18,15 +18,18 @@ usb = USB.USB_communicate()
 class WorkerThread(QThread):
     update_signal_avr = pyqtSignal(int)
     update_signal_esp = pyqtSignal(int)
-    update_signal_gsm = pyqtSignal(int)
+    update_signal_gsm = pyqtSignal(str)
     
-    def run(self):
-        
+    def wait_avr(self):
         result_data1 = random.randint(0, 22)
         self.update_signal_avr.emit(result_data1)
+        
+    def wait_esp(self):
         result_data2 = random.randint(23, 44)
         self.update_signal_esp.emit(result_data2)
-        result_data3 = random.randint(45, 66)
+        
+    def wait_imei(self, port):
+        result_data3 = str(usb.at_read_write(port))
         self.update_signal_gsm.emit(result_data3)
         
 
@@ -64,8 +67,11 @@ class DeviceStatus(QtWidgets.QWidget):
             self.label_gsm.setText("GSM: None")
         else:
             self.usb_port.setText(str(port_num))
-            #self.label_gsm.setText("IMEI: " + str(usb.at_read_write(port_num)))
-        
+            
+        t = Thread (target = self.worker_thread.wait_imei, args = (port_num, ))
+        t.deamon = True
+        t.start()
+        #t.join()
         '''timer = QTimer(self)
         timer.timeout.connect(self.showStatus)
         timer.start(100)
@@ -94,8 +100,8 @@ class DeviceStatus(QtWidgets.QWidget):
         #QtTest.QTest.qWait(100)
         
     def update_gsm(self, gsm_status):
-        self.label_gsm.setText("GSM: test " + str(gsm_status))
-        #QtTest.QTest.qWait(100)
+        self.label_gsm.setText("GSM: " + str(gsm_status))
+        QtTest.QTest.qWait(100)
         
     def update_all(self, avr, esp, gsm):
         #self.avr_status += 1
@@ -197,9 +203,9 @@ class Ui_MainWindow(QMainWindow):
             else:
                 self.dev = DeviceStatus(port_id = id_dev)
             self.gridLayout_5.addWidget(self.dev, grid_list[id_dev][0], grid_list[id_dev][1], grid_list[id_dev][2], grid_list[id_dev][3])
-            widget = Thread (target = self.dev.worker_thread.run)
-            widget.deamon = True
-            widget.start()
+            #widget = Thread (target = self.dev.worker_thread.run)
+            #widget.deamon = True
+            #widget.start()
            
             
         
