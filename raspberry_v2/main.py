@@ -83,9 +83,9 @@ if __name__ == "__main__":
     #t3.join()
     print ("t3 ended")
     t1.join()
-    while imei.qsize() > 0:
+    '''while imei.qsize() > 0:
         print ("queue elenment: ", imei.get())
-    print ("!!!!!!!!!!!")
+    print ("!!!!!!!!!!!")'''
     stop_thread = True
     print("thread 1 ended")
     t2.join()

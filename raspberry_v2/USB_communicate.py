@@ -27,6 +27,7 @@ class USB_communicate():
 	''' take usb list '''
 	def GetCHDevices(self, _str):
 		devOld = self.GetDevList()
+		usb_devices = []
 		for device in devOld:
 			if _str in device:
 				usb_devices.append("/dev/" + device)
