@@ -3,12 +3,13 @@ import can
 import queue
 import struct
 from collections import namedtuple
+import numpy as np
 
 interface = 'socketcan'
 channel = 'can0'
-motor_data = namedtuple('motor_data', ['id', 'acc', 'dec', 'dir', 'speed', 'step']) 
-programmator = namedtuple('programmator', ['id', 'start', 'OK', 'error', 'n1', 'n2', 'n3', 'n4'])
-format_string = '>BBBBHH'
+#motor_data = namedtuple('motor_data', ['id', 'acc', 'dec', 'dir', 'speed', 'step']) 
+#programmator = namedtuple('programmator', ['id', 'start', 'OK', 'error', 'n1', 'n2', 'n3', 'n4'])
+format_string = '<BBBBHH'
 
 input_format = '>BHHBBB'
 
@@ -19,6 +20,11 @@ class CAN_communicate():
 	start_move =  [89, 0, 0, 0, 0, 0] 
 	stop =        [99, 0, 0, 0, 0, 0]
 	programming = [11, 0, 0, 0, 0, 0]
+	
+	#programming_pass_status = 4095
+	#programming_fail_status = 4095
+	
+	
 
 	''' pack data to send '''
 	def pack(self, list):
@@ -94,9 +100,9 @@ class CAN_communicate():
 		print ("size: ", q.qsize())
 		print ("data: ", message.data)
 		parse(q.get())
-
+		
 	''' take data from can bus '''
-	def take(self,):
+	def take(self):
 		bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
 		reader = can.BufferedReader()
 		bus_notifier = can.Notifier(bus, [reader]) 
@@ -106,15 +112,38 @@ class CAN_communicate():
 			if (msg.data[0] == 12):
 				result = self.unpack(msg.data)
 				print ("programming ", result)
-				pass_status = result[1]
-				fail_status = result[2]
-				result = (pass_status, fail_status)
-				return result
+				#programming_pass_status = result[1]
+				#programming_fail_status = result[2]
+				self.programming_status(result[1], result[2])
+				#print (programming_pass_status, programming_fail_status)
+				#return result
+				
+	def programming_status (self, pass_val, fail_val):
+		pass_status = [1,1,1,1,1,1,1,1,1,1,1,1]
+		fail_status = [1,1,1,1,1,1,1,1,1,1,1,1]
+		pass_val = np.binary_repr(int(pass_val), width=12)	
+		fail_val = np.binary_repr(int(fail_val), width=12)
+		print(pass_val, fail_val)
+		#self.programming_fail_status = bin(self.programming_fail_status)
+		for i in range (0, 12):
+			pass_status[i] = int(pass_val) % 10
+			fail_status[i] = int(fail_val) % 10
+			pass_val = int(pass_val) // 10
+			fail_val = int(fail_val) // 10
+		pass_status.reverse()
+		fail_status.reverse()
+		result = [pass_status, fail_status]
+		print (result)
+		#print(int(pass_val) % int(10))
+		#return result
 
 	''' clear buffer ''' 
 	def clear_buffer(self):
 		bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
 		bus.flush_tx_buffer()
+		
+
+		
     
     
 	

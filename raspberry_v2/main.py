@@ -27,15 +27,15 @@ def UI_thread(imei_q):
     
 def data_in():
     global stop_thread
+    global programming_pass_status
+    global programming_fail_status
+    
     can = CAN.CAN_communicate()
     print ("Thread CAN communicate start")
     can.clear_buffer()
     while not stop_thread:
-        #print ("read CAN")
         result = can.take()
-        if result:
-            print (result)
-    #os._exit(1)
+
     
 def toggle():
     global stop_thread
@@ -44,12 +44,6 @@ def toggle():
         gpio.write_pin(21, 1, 1)
         gpio.write_pin(21, 0, 1)
         
-'''def test ():
-    global stop_thread
-    test = UI.Signal()
-    while not stop_thread:
-        test.action()
-        time.sleep(10)'''
         
 def print_cmd():
     cmd = USB.system_cmd()
@@ -62,7 +56,7 @@ if __name__ == "__main__":
     #usb = USB.USB_communicate()
     
     t1 = Thread(target = UI_thread, args = (imei, ))
-    t2 = Thread(target = data_in, args = (q, ))
+    t2 = Thread(target = data_in, args = ())
     #t3 = Thread (target = usb.detect_imei, args = (imei, ))
     t4 = Thread (target = toggle)
     t5 = Thread (target = print_cmd)

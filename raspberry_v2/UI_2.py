@@ -15,6 +15,7 @@ from PyQt5.QtCore import *
 usb = USB.USB_communicate()
 system = USB.system_cmd()
 
+
 class WorkerThread(QThread):
     update_signal_avr = pyqtSignal(str)
     update_signal_esp = pyqtSignal(int)
