@@ -16,6 +16,7 @@ import time
 from threading import *
 import queue 
 import sys
+import re
 
 
 class Ui_MainWindow(object):
@@ -531,6 +532,16 @@ class Ui_MainWindow(object):
                     
     def detect(self):
         self.started.setText("Started")
+        
+
+    def GSM(self, que):
+        sub = "+CGSN: "
+        if not que.empty:
+            temp = str(que.get(block = False))
+            if (temp > sub and len(temp) > len(sub)):
+                print ("true") 
+                self.gsm_1.setText("GSM: " + temp)
+            
 
 
 
