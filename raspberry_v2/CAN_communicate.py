@@ -102,7 +102,7 @@ class CAN_communicate():
 		parse(q.get())
 		
 	''' take data from can bus '''
-	def take(self):
+	def take(self, in_queue):
 		bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
 		reader = can.BufferedReader()
 		bus_notifier = can.Notifier(bus, [reader]) 
@@ -112,19 +112,15 @@ class CAN_communicate():
 			if (msg.data[0] == 12):
 				result = self.unpack(msg.data)
 				print ("programming ", result)
-				#programming_pass_status = result[1]
-				#programming_fail_status = result[2]
-				self.programming_status(result[1], result[2])
-				#print (programming_pass_status, programming_fail_status)
-				#return result
+				self.programming_status(result[1], result[2], in_queue)
+
 				
-	def programming_status (self, pass_val, fail_val):
+	def programming_status (self, pass_val, fail_val, in_queue):
 		pass_status = [1,1,1,1,1,1,1,1,1,1,1,1]
 		fail_status = [1,1,1,1,1,1,1,1,1,1,1,1]
 		pass_val = np.binary_repr(int(pass_val), width=12)	
 		fail_val = np.binary_repr(int(fail_val), width=12)
 		print(pass_val, fail_val)
-		#self.programming_fail_status = bin(self.programming_fail_status)
 		for i in range (0, 12):
 			pass_status[i] = int(pass_val) % 10
 			fail_status[i] = int(fail_val) % 10
@@ -134,7 +130,9 @@ class CAN_communicate():
 		fail_status.reverse()
 		result = [pass_status, fail_status]
 		print (result)
-		#print(int(pass_val) % int(10))
+		in_queue.put(result)
+		if (in_queue.qsize()):
+			print ("qsize = ", in_queue.qsize())
 		#return result
 
 	''' clear buffer ''' 

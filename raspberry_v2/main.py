@@ -25,7 +25,7 @@ def UI_thread(imei_q):
     print ("stop UI")
     #os._exit(app.exec_())
     
-def data_in():
+def data_in(que):
     global stop_thread
     global programming_pass_status
     global programming_fail_status
@@ -34,7 +34,7 @@ def data_in():
     print ("Thread CAN communicate start")
     can.clear_buffer()
     while not stop_thread:
-        result = can.take()
+        result = can.take(que)
 
     
 def toggle():
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     #usb = USB.USB_communicate()
     
     t1 = Thread(target = UI_thread, args = (imei, ))
-    t2 = Thread(target = data_in, args = ())
+    t2 = Thread(target = data_in, args = (q, ))
     #t3 = Thread (target = usb.detect_imei, args = (imei, ))
     t4 = Thread (target = toggle)
     t5 = Thread (target = print_cmd)
