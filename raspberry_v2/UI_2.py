@@ -16,12 +16,12 @@ usb = USB.USB_communicate()
 system = USB.system_cmd()
 
 class WorkerThread(QThread):
-    update_signal_avr = pyqtSignal(int)
+    update_signal_avr = pyqtSignal(str)
     update_signal_esp = pyqtSignal(int)
     update_signal_gsm = pyqtSignal(str)
     
-    def wait_avr(self):
-        result_data1 = random.randint(0, 22)
+    def wait_avr(self, num):
+        result_data1 = str(num)
         self.update_signal_avr.emit(result_data1)
         
     def wait_esp(self, port):
@@ -76,6 +76,10 @@ class DeviceStatus(QtWidgets.QWidget):
         t2.deamon = True
         t2.start()
         
+        t3 = Thread (target = self.worker_thread.wait_avr, args = (port_id + 1, ))
+        t3.deamon = True
+        t3.start()
+        
     def update_widget(self, avr_status, esp_status, gsm_status):
         #while not stop_thread:
         self.label_arm.setText("AVR: test " + str(avr_status))
@@ -84,11 +88,11 @@ class DeviceStatus(QtWidgets.QWidget):
         QtTest.QTest.qWait(100)
         
     def update_processor(self, avr_status):
-        self.label_arm.setText("AVR: test " + str(avr_status))
+        self.label_arm.setText("AVR: " + str(avr_status))
         #QtTest.QTest.qWait(100)
         
     def update_esp(self, esp_status):
-        self.label_esp.setText("ESP: test " + str(esp_status))
+        self.label_esp.setText("ESP:  " + str(esp_status))
         #QtTest.QTest.qWait(100)
         
     def update_gsm(self, gsm_status):
@@ -143,6 +147,9 @@ class Ui_MainWindow(QMainWindow):
         self.gridLayout_5.setObjectName("gridLayout_5")
         
         comports = usb.detect_ports("ttyCH")
+        if not comports:
+            comports = ["1", "2", "3", "4",
+                        "5", "6", "7", "8"]
         
         esp_com = ["/dev/ttyUSB0", "/dev/ttyUSB1",
                    "/dev/ttyUSB2", "/dev/ttyUSB3",
@@ -160,6 +167,13 @@ class Ui_MainWindow(QMainWindow):
             else:
                 self.dev = DeviceStatus(port_id = id_dev)
             self.gridLayout_5.addWidget(self.dev, grid_list[id_dev][0], grid_list[id_dev][1], grid_list[id_dev][2], grid_list[id_dev][3])
+            
+        '''for id_dev in range(0,8):
+            if comports[id_dev]:
+                self.dev = DeviceStatus("empty", "empty", id_dev)
+            else:
+                self.dev = DeviceStatus(port_id = id_dev)
+            self.gridLayout_5.addWidget(self.dev, grid_list[id_dev][0], grid_list[id_dev][1], grid_list[id_dev][2], grid_list[id_dev][3])'''
            
         self.Devices.addTab(self.tab, "")
         

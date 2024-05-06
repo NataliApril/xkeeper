@@ -8,20 +8,26 @@ interface = 'socketcan'
 channel = 'can0'
 motor_data = namedtuple('motor_data', ['id', 'acc', 'dec', 'dir', 'speed', 'step']) 
 programmator = namedtuple('programmator', ['id', 'start', 'OK', 'error', 'n1', 'n2', 'n3', 'n4'])
-format_string = '<BBBBHH'
+format_string = '>BBBBHH'
+
+input_format = '>BHHBBB'
 
 class CAN_communicate(): 
 	
-	motor = [23, 10, 10, 0, 0, 0] 
-	start_run = [88, 0, 0, 0, 0, 0] 
-	start_move = [89, 0, 0, 0, 0, 0] 
-	stop = [99, 0, 0, 0, 0, 0]
-	programming = [101, 0, 0, 0, 0, 0]
+	motor =       [23, 0, 0, 0, 0, 0] 
+	start_run =   [88, 0, 0, 0, 0, 0] 
+	start_move =  [89, 0, 0, 0, 0, 0] 
+	stop =        [99, 0, 0, 0, 0, 0]
+	programming = [11, 0, 0, 0, 0, 0]
 
 	''' pack data to send '''
 	def pack(self, list):
 		packed_data = struct.pack(format_string, *list)
 		return packed_data
+		
+	def unpack(self, list):
+		unpacked_data = struct.unpack(input_format, list)
+		return unpacked_data
 
 	''' parse data '''
 	def parse(self, data):
@@ -33,8 +39,8 @@ class CAN_communicate():
 			print("run")
 		elif data[0] == 99:
 			print("stop")
-		elif data[0] == 101:
-			print ("programming")
+		elif data[0] == 11:
+			print ("programming ")
 		else:
 			print ("unknown")
 		#return 0
@@ -90,18 +96,20 @@ class CAN_communicate():
 		parse(q.get())
 
 	''' take data from can bus '''
-	def take(self, q):
+	def take(self,):
 		bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
 		reader = can.BufferedReader()
 		bus_notifier = can.Notifier(bus, [reader]) 
 		msg = reader.get_message(1)
 		if msg is not None:
-			q.put(msg.data)
-			#print ("size: ", q.qsize())
-			self.parse(q.get())
-			#print ("size: ", q.qsize())
-		#else:
-			#print("None")
+			#data about programming status
+			if (msg.data[0] == 12):
+				result = self.unpack(msg.data)
+				print ("programming ", result)
+				pass_status = result[1]
+				fail_status = result[2]
+				result = (pass_status, fail_status)
+				return result
 
 	''' clear buffer ''' 
 	def clear_buffer(self):

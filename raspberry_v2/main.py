@@ -25,14 +25,16 @@ def UI_thread(imei_q):
     print ("stop UI")
     #os._exit(app.exec_())
     
-def data_in(in_q):
+def data_in():
     global stop_thread
     can = CAN.CAN_communicate()
     print ("Thread CAN communicate start")
     can.clear_buffer()
     while not stop_thread:
         #print ("read CAN")
-        can.take(in_q)
+        result = can.take()
+        if result:
+            print (result)
     #os._exit(1)
     
 def toggle():
