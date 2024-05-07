@@ -14,6 +14,7 @@ from PyQt5.QtCore import *
 
 usb = USB.USB_communicate()
 system = USB.system_cmd()
+can_data = CAN.CAN_communicate()
 
 
 class WorkerThread(QThread):
@@ -21,8 +22,8 @@ class WorkerThread(QThread):
     update_signal_esp = pyqtSignal(int)
     update_signal_gsm = pyqtSignal(str)
     
-    def wait_avr(self, num):
-        result_data1 = str(num)
+    def wait_avr(self, port):
+        result_data1 = str(can_data.take_status_isp(port))
         self.update_signal_avr.emit(result_data1)
         
     def wait_esp(self, port):
@@ -58,7 +59,7 @@ class DeviceStatus(QtWidgets.QWidget):
         self.layout.addWidget(self.label_gsm, 3, 0)
         
         self.worker_thread = WorkerThread()
-        self.worker_thread.update_signal_avr.connect(self.update_processor)
+        self.worker_thread.update_signal_avr.connect(self.update_avr)
         self.worker_thread.update_signal_esp.connect(self.update_esp)
         self.worker_thread.update_signal_gsm.connect(self.update_gsm)
         
@@ -77,24 +78,17 @@ class DeviceStatus(QtWidgets.QWidget):
         t2.deamon = True
         t2.start()
         
-        t3 = Thread (target = self.worker_thread.wait_avr, args = (port_id + 1, ))
+        t3 = Thread (target = self.worker_thread.wait_avr, args = (port_id, ))
         t3.deamon = True
         t3.start()
         
-    def update_widget(self, avr_status, esp_status, gsm_status):
-        #while not stop_thread:
-        self.label_arm.setText("AVR: test " + str(avr_status))
-        self.label_esp.setText("ESP: test " + str(esp_status))
-        self.label_gsm.setText("GSM: test " + str(gsm_status))
-        QtTest.QTest.qWait(100)
-        
-    def update_processor(self, avr_status):
-        self.label_arm.setText("AVR: " + str(avr_status))
-        #QtTest.QTest.qWait(100)
+    def update_avr(self, avr_status):
+        self.label_arm.setText("AVR: " + avr_status)
+        QtTest.QTest.qWait(50)
         
     def update_esp(self, esp_status):
         self.label_esp.setText("ESP:  " + str(esp_status))
-        #QtTest.QTest.qWait(100)
+        QtTest.QTest.qWait(150)
         
     def update_gsm(self, gsm_status):
         self.label_gsm.setText("GSM: " + str(gsm_status))
@@ -106,7 +100,7 @@ class Ui_MainWindow(QMainWindow):
     can_ = CAN.CAN_communicate()
     update_signal = pyqtSignal(int)
     
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow, isp_queue):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1200, 800)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -380,7 +374,7 @@ class Ui_MainWindow(QMainWindow):
         can_.motor[2] = value
         
         self.sendButton.clicked.connect(lambda: can_.producer("motor"))
-        self.startButton.clicked.connect(lambda: can_.producer("start_run", ))
+        self.startButton.clicked.connect(lambda: can_.producer("start_run"))
         self.startButton_2.clicked.connect(lambda: can_.producer("start_move"))
         self.stepButton.clicked.connect(lambda: can_.producer("stop"))
         self.programming.clicked.connect(lambda: can_.producer("programm"))
@@ -404,11 +398,15 @@ class Ui_MainWindow(QMainWindow):
         self.Devices.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
-        timer_dev = QTimer(self)
+        '''timer_dev = QTimer(self)
         timer_dev.timeout.connect(self.searchDev)
         timer_dev.start(100)
+        self.flag_search = False'''
         
-        self.flag_search = False
+        timer_isp = QTimer(self)
+        timer_isp.timeout.connect(can_.wait_data_from_isp())
+        timer_isp.start(200)
+        
         
     def searchDev(self):
         if not self.flag_search:
@@ -418,6 +416,13 @@ class Ui_MainWindow(QMainWindow):
                 self.flag_search = True
             else:
                 print ("Empty!")
+                
+    '''def wait_data_from_isp(self, in_queue):
+        print("waiting")
+        if in_queue.qsize > 0:
+            return in_queue.get()
+        else:
+            return 0'''
         
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -488,6 +493,5 @@ class Ui_MainWindow(QMainWindow):
     def detect(self):
         self.started.setText("Started")
     
-    
-    #def devices_data():
+
         

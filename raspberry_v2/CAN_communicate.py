@@ -12,6 +12,9 @@ channel = 'can0'
 format_string = '<BBBBHH'
 
 input_format = '>BHHBBB'
+isp_queue = queue.Queue()
+data_from_isp = [[0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0]]
+
 
 class CAN_communicate(): 
 	
@@ -20,11 +23,8 @@ class CAN_communicate():
 	start_move =  [89, 0, 0, 0, 0, 0] 
 	stop =        [99, 0, 0, 0, 0, 0]
 	programming = [11, 0, 0, 0, 0, 0]
-	
-	#programming_pass_status = 4095
-	#programming_fail_status = 4095
-	
-	
+	global isp_queue
+	global data_from_isp
 
 	''' pack data to send '''
 	def pack(self, list):
@@ -65,9 +65,6 @@ class CAN_communicate():
 				packed_data = self.pack(self.stop)
 			case "programm":
 				packed_data = self.pack(self.programming)
-			
-		#msg_queue_out.put(packed_data)
-		#print ("put data")
 		print ("data out:", packed_data)
 		msg = can.Message(arbitration_id=0xc0ffee,
 						  data=packed_data,
@@ -109,12 +106,13 @@ class CAN_communicate():
 		msg = reader.get_message(1)
 		if msg is not None:
 			#data about programming status
+			print("data in: ", msg.data)
 			if (msg.data[0] == 12):
 				result = self.unpack(msg.data)
 				print ("programming ", result)
-				self.programming_status(result[1], result[2], in_queue)
+				self.programming_status(result[1], result[2], isp_queue)
 
-				
+	'''take data from CAN packet'''			
 	def programming_status (self, pass_val, fail_val, in_queue):
 		pass_status = [1,1,1,1,1,1,1,1,1,1,1,1]
 		fail_status = [1,1,1,1,1,1,1,1,1,1,1,1]
@@ -126,19 +124,39 @@ class CAN_communicate():
 			fail_status[i] = int(fail_val) % 10
 			pass_val = int(pass_val) // 10
 			fail_val = int(fail_val) // 10
-		pass_status.reverse()
-		fail_status.reverse()
+		#pass_status.reverse()
+		#fail_status.reverse()
 		result = [pass_status, fail_status]
-		print (result)
 		in_queue.put(result)
-		if (in_queue.qsize()):
-			print ("qsize = ", in_queue.qsize())
-		#return result
 
 	''' clear buffer ''' 
 	def clear_buffer(self):
 		bus = can.Bus(channel=channel, interface=interface, bitrate = 125000)
 		bus.flush_tx_buffer()
+		
+	'''wait new data from queue'''
+	def wait_data_from_isp(self):
+		global isp_queue
+		global data_from_isp
+		if isp_queue.qsize() > 0:
+			print ("Queue size: ", isp_queue.qsize())
+			data_from_isp = isp_queue.get()
+		 
+	'''data to UI'''			
+	def take_status_isp(self, port):
+		global data_from_isp
+		print ("statuses: ", data_from_isp)
+		pass_data = data_from_isp[0]
+		fail_data = data_from_isp[1]
+		result = pass_data[port] + fail_data[port]
+		if result == 0:
+			return "Unknown"
+		elif result == 1:
+			return "Sucsess"
+		elif result == 2:
+			return "Fail"
+		else:
+			return "Fatal error"
 		
 
 		

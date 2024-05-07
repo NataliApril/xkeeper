@@ -10,40 +10,36 @@ import GPIO_communicate as GPIO
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 stop_thread = False
-q = queue.Queue()
+q = CAN.isp_queue
 imei = queue.Queue()
 can_pack = queue.Queue()
 
-def UI_thread(imei_q):
+def UI_thread(que):
     global flag_end
     app = UI.QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = UI.Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    ui.setupUi(MainWindow, que)
     MainWindow.show()
     sys.exit(app.exec_())
     print ("stop UI")
-    #os._exit(app.exec_())
     
-def data_in(que):
+def data_in():
     global stop_thread
-    global programming_pass_status
-    global programming_fail_status
-    
+    global q
     can = CAN.CAN_communicate()
     print ("Thread CAN communicate start")
     can.clear_buffer()
     while not stop_thread:
-        result = can.take(que)
+        result = can.take(q)
+        #can.wait_data_from_isp()
 
-    
 def toggle():
     global stop_thread
     gpio = GPIO.GPIO_communicate()
     while not stop_thread:
         gpio.write_pin(21, 1, 1)
         gpio.write_pin(21, 0, 1)
-        
         
 def print_cmd():
     cmd = USB.system_cmd()
@@ -55,8 +51,8 @@ if __name__ == "__main__":
     can_pack = queue.Queue()
     #usb = USB.USB_communicate()
     
-    t1 = Thread(target = UI_thread, args = (imei, ))
-    t2 = Thread(target = data_in, args = (q, ))
+    t1 = Thread(target = UI_thread, args = (q, ))
+    t2 = Thread(target = data_in, args = ( ))
     #t3 = Thread (target = usb.detect_imei, args = (imei, ))
     t4 = Thread (target = toggle)
     t5 = Thread (target = print_cmd)
@@ -79,9 +75,6 @@ if __name__ == "__main__":
     #t3.join()
     print ("t3 ended")
     t1.join()
-    '''while imei.qsize() > 0:
-        print ("queue elenment: ", imei.get())
-    print ("!!!!!!!!!!!")'''
     stop_thread = True
     print("thread 1 ended")
     t2.join()
