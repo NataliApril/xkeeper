@@ -17,7 +17,7 @@
    <string notr="true">*{
 	border: none;
 	background-color:transparent;
-	background: none;
+	background: transparent;
 	padding: 0;
 	margin: 0;
 	color: #fff;
@@ -31,6 +31,9 @@
 QPushButton{
 	text-align: left;
 	padding: 5px 10px;
+}
+#centerMenuSubContainer{
+	bacground-color: #16191d;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -120,7 +123,7 @@ QPushButton{
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/align-justify.svg</normaloff>:/icons/align-justify.svg</iconset>
+                 <normaloff>:/newPrefix/icons/Navigation-Menu-1--Streamline-Ultimate.svg</normaloff>:/newPrefix/icons/Navigation-Menu-1--Streamline-Ultimate.svg</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -185,7 +188,7 @@ QPushButton{
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/home.svg</normaloff>:/icons/home.svg</iconset>
+                 <normaloff>:/newPrefix/icons/House-1--Streamline-Ultimate.svg</normaloff>:/newPrefix/icons/House-1--Streamline-Ultimate.svg</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -205,7 +208,7 @@ QPushButton{
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/list.svg</normaloff>:/icons/list.svg</iconset>
+                 <normaloff>:/newPrefix/icons/List-Numbers--Streamline-Ultimate.svg</normaloff>:/newPrefix/icons/List-Numbers--Streamline-Ultimate.svg</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -225,7 +228,7 @@ QPushButton{
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/printer.svg</normaloff>:/icons/printer.svg</iconset>
+                 <normaloff>:/newPrefix/icons/Print-Text--Streamline-Ultimate.svg</normaloff>:/newPrefix/icons/Print-Text--Streamline-Ultimate.svg</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -285,7 +288,7 @@ QPushButton{
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/settings.svg</normaloff>:/icons/settings.svg</iconset>
+                 <normaloff>:/newPrefix/icons/Cog-Search-1--Streamline-Ultimate.svg</normaloff>:/newPrefix/icons/Cog-Search-1--Streamline-Ultimate.svg</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -305,7 +308,7 @@ QPushButton{
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/info.svg</normaloff>:/icons/info.svg</iconset>
+                 <normaloff>:/newPrefix/icons/Information-Circle--Streamline-Ultimate.svg</normaloff>:/newPrefix/icons/Information-Circle--Streamline-Ultimate.svg</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -325,7 +328,7 @@ QPushButton{
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/help-circle.svg</normaloff>:/icons/help-circle.svg</iconset>
+                 <normaloff>:/newPrefix/icons/Laptop-Help-Message--Streamline-Ultimate.svg</normaloff>:/newPrefix/icons/Laptop-Help-Message--Streamline-Ultimate.svg</iconset>
                </property>
                <property name="iconSize">
                 <size>
@@ -391,7 +394,7 @@ QPushButton{
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/icons/x-circle.svg</normaloff>:/icons/x-circle.svg</iconset>
+                 <normaloff>:/newPrefix/icons/Remove-Bold--Streamline-Ultimate.svg</normaloff>:/newPrefix/icons/Remove-Bold--Streamline-Ultimate.svg</iconset>
                </property>
                <property name="iconSize">
                 <size>
