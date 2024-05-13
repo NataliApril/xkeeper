@@ -1,0 +1,8 @@
+CAN-library:
+1. https://readthedocs.org/projects/python-can/downloads/pdf/stable/
+2. https://python-can.readthedocs.io/en/stable/listeners.html
+
+ESPtool:
+1. https://docs.espressif.com/projects/esptool/en/latest/esp32/installation.html
+2. https://pypi.org/project/esptool/
+3. https://docs.espressif.com/projects/esptool/en/latest/esp32/esptool/basic-commands.html
