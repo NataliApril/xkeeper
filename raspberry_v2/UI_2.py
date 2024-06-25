@@ -398,14 +398,14 @@ class Ui_MainWindow(QMainWindow):
         self.Devices.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
-        '''timer_dev = QTimer(self)
+        timer_dev = QTimer(self)
         timer_dev.timeout.connect(self.searchDev)
         timer_dev.start(100)
-        self.flag_search = False'''
+        self.flag_search = False
         
-        timer_isp = QTimer(self)
+        '''timer_isp = QTimer(self)
         timer_isp.timeout.connect(can_.wait_data_from_isp())
-        timer_isp.start(200)
+        timer_isp.start(200)'''
         
         
     def searchDev(self):
@@ -416,13 +416,7 @@ class Ui_MainWindow(QMainWindow):
                 self.flag_search = True
             else:
                 print ("Empty!")
-                
-    '''def wait_data_from_isp(self, in_queue):
-        print("waiting")
-        if in_queue.qsize > 0:
-            return in_queue.get()
-        else:
-            return 0'''
+
         
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
