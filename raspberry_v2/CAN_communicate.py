@@ -145,18 +145,21 @@ class CAN_communicate():
 	'''data to UI'''			
 	def take_status_isp(self, port):
 		global data_from_isp
-		print ("statuses: ", data_from_isp)
-		pass_data = data_from_isp[0]
-		fail_data = data_from_isp[1]
-		result = pass_data[port] + fail_data[port]
-		if result == 0:
-			return "Unknown"
-		elif result == 1:
-			return "Sucsess"
-		elif result == 2:
-			return "Fail"
-		else:
-			return "Fatal error"
+		while True:
+			print ("statuses: ", data_from_isp)
+			pass_data = data_from_isp[0]
+			fail_data = data_from_isp[1]
+			result = pass_data[port] + fail_data[port]
+			if result == 0:
+				return "Unknown"
+			elif result == 1:
+				return "Sucsess"
+			elif result == 2:
+				return "Fail"
+			else:
+				return "Fatal error"
+			
+			time.sleep(1)
 		
 
 		
