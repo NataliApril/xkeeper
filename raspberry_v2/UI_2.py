@@ -22,6 +22,10 @@ class WorkerThread(QThread):
     update_signal_esp = pyqtSignal(int)
     update_signal_gsm = pyqtSignal(str)
     
+    '''def __init__(self, esp_com, port_num, port_id):
+        super().__init__()
+        self.start_timer()'''
+    
     def wait_avr(self, port):
         result_data1 = str(can_data.take_status_isp(port))
         self.update_signal_avr.emit(result_data1)
@@ -34,10 +38,29 @@ class WorkerThread(QThread):
         result_data3 = str(usb.at_read_write(port))
         self.update_signal_gsm.emit(result_data3)
         
+    '''def start_timer(self):
+        device_timer = QTimer(self)
+        device_timer.timeout.connect(self.wait_data)
+        device_timer.start(100)
+   
+    def wait_data(self):
+        self.wait_avr(1)
+        self.wait_esp(1)
+        self.wait_imei(1)
+        print ("wait data!!!!!!!!!!!!")'''
+        
 
 class DeviceStatus(QtWidgets.QWidget):
-        
+    
+    avr = 0
+    esp = 0
+    gsm = 0
+    
     def __init__(self, esp_com = "empty", port_num = "empty", port_id = None):
+        global avr
+        global esp
+        global gsm
+        
         super().__init__()
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
@@ -70,6 +93,18 @@ class DeviceStatus(QtWidgets.QWidget):
         else:
             self.usb_port.setText(str(port_num))
             
+        '''device_timer = QTimer(self)
+        device_timer.timeout.connect(self.update_labels)
+        device_timer.start(100)'''
+        
+        avr = port_id
+        esp = esp_com
+        gsm = port_num
+        
+        '''self.port_name = port_num
+        self.esp       = esp_com
+        self.id        = port_id'''
+        
         t1 = Thread (target = self.worker_thread.wait_imei, args = (port_num, ))
         t1.deamon = True
         t1.start()
@@ -82,17 +117,30 @@ class DeviceStatus(QtWidgets.QWidget):
         t3.deamon = True
         t3.start()
         
+        '''t1 = Thread (target = self.worker_thread.start_timer, args = ( ))
+        t1.deamon = True
+        t1.start()'''
+        
     def update_avr(self, avr_status):
         self.label_arm.setText("AVR: " + avr_status)
-        QtTest.QTest.qWait(50)
+        QtTest.QTest.qWait(100)
         
     def update_esp(self, esp_status):
         self.label_esp.setText("ESP:  " + str(esp_status))
-        QtTest.QTest.qWait(150)
+        QtTest.QTest.qWait(100)
         
     def update_gsm(self, gsm_status):
         self.label_gsm.setText("GSM: " + str(gsm_status))
         QtTest.QTest.qWait(100)
+        
+    '''def update_labels(self):
+        global avr
+        global esp
+        global gsm
+        self.worker_thread.wait_imei(gsm)
+        self.worker_thread.wait_esp(esp)
+        self.worker_thread.wait_avr(avr)
+        print ("timer woking!!!!!!!!")'''
                         
     
 class Ui_MainWindow(QMainWindow):

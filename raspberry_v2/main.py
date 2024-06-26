@@ -32,7 +32,7 @@ def data_in():
     can.clear_buffer()
     while not stop_thread:
         result = can.take(q)
-        can.wait_data_from_isp()
+        can.wait_data_from_isp() 
 
 def toggle():
     global stop_thread
