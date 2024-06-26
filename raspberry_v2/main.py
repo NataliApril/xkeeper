@@ -73,7 +73,7 @@ if __name__ == "__main__":
     #t6.start()
     
     #t3.join()
-    print ("t3 ended")
+    #print ("t3 ended")
     t1.join()
     stop_thread = True
     print("thread 1 ended")
