@@ -16,15 +16,16 @@ usb = USB.USB_communicate()
 system = USB.system_cmd()
 can_data = CAN.CAN_communicate()
 
+slots_name = ["Slot 1", "Slot 2",
+              "Slot 3", "Slot 4",
+              "Slot 5", "Slot 6", 
+              "Slot 7", "Slot 8"] 
 
 class WorkerThread(QThread):
     update_signal_avr = pyqtSignal(str)
     update_signal_esp = pyqtSignal(int)
     update_signal_gsm = pyqtSignal(str)
-    
-    '''def __init__(self, esp_com, port_num, port_id):
-        super().__init__()
-        self.start_timer()'''
+    update_signal_port= pyqtSignal(str)
     
     def wait_avr(self, port):
         result_data1 = str(can_data.take_status_isp(port))
@@ -37,30 +38,16 @@ class WorkerThread(QThread):
     def wait_imei(self, port):
         result_data3 = str(usb.at_read_write(port))
         self.update_signal_gsm.emit(result_data3)
-        
-    '''def start_timer(self):
-        device_timer = QTimer(self)
-        device_timer.timeout.connect(self.wait_data)
-        device_timer.start(100)
-   
-    def wait_data(self):
-        self.wait_avr(1)
-        self.wait_esp(1)
-        self.wait_imei(1)
-        print ("wait data!!!!!!!!!!!!")'''
-        
 
-class DeviceStatus(QtWidgets.QWidget):
-    
-    avr = 0
-    esp = 0
-    gsm = 0
-    
-    def __init__(self, esp_com = "empty", port_num = "empty", port_id = None):
+    def wait_port(self, port):
+        result_data4 = slots_name[port]
+        self.update_signal_port.emit(result_data4)        
+
+class DeviceStatus(QtWidgets.QWidget):    
+    def __init__(self, slot_name, esp_com = "empty", port_num = "empty", port_id = None):
         global avr
         global esp
         global gsm
-
         
         super().__init__()
         self.frame = QtWidgets.QFrame(self)
@@ -69,16 +56,15 @@ class DeviceStatus(QtWidgets.QWidget):
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
-        # self.verticalLayout = QtWidgets.QVBoxLayout(self.frame)
-        
+        self.usb_port  = QtWidgets.QLabel("Slot: ")
+        # self.usb_port.setText(str(slot_name))
+        self.usb_port  = QtWidgets.QLabel(self.frame)
         self.label_arm = QtWidgets.QLabel("AVR: ")
         self.label_arm = QtWidgets.QLabel(self.frame)
         self.label_esp = QtWidgets.QLabel("ESP: ")
         self.label_esp = QtWidgets.QLabel(self.frame)
         self.label_gsm = QtWidgets.QLabel("GSM: ")
         self.label_gsm = QtWidgets.QLabel(self.frame)
-        self.usb_port  = QtWidgets.QLabel("")
-        self.usb_port = QtWidgets.QLabel(self.frame)
         
         self.port = port_id
         
@@ -95,13 +81,14 @@ class DeviceStatus(QtWidgets.QWidget):
         self.worker_thread.update_signal_avr.connect(self.update_avr)
         self.worker_thread.update_signal_esp.connect(self.update_esp)
         self.worker_thread.update_signal_gsm.connect(self.update_gsm)
+        self.worker_thread.update_signal_port.connect(self.update_port)
         
         if port_num == "empty":
             self.label_arm.setText("AVR: None")
             self.label_esp.setText("ESP: None")
-            self.label_gsm.setText("GSM: None")
-        else:
-            self.usb_port.setText(str(port_num))
+            self.label_gsm.setText("GSM: None") 
+        # else:
+            # self.usb_port.setText("Slot")
         
         avr = port_id
         esp = esp_com
@@ -118,6 +105,10 @@ class DeviceStatus(QtWidgets.QWidget):
         t3 = Thread (target = self.worker_thread.wait_avr, args = (port_id, ))
         t3.deamon = True
         t3.start()
+
+        t4 = Thread (target = self.worker_thread.wait_port, args = (slot_name, ))
+        t4.deamon = True
+        t4.start()
         
     def update_avr(self, avr_status):
         self.label_arm.setText("AVR: " + avr_status)
@@ -129,6 +120,10 @@ class DeviceStatus(QtWidgets.QWidget):
         
     def update_gsm(self, gsm_status):
         self.label_gsm.setText("GSM: " + str(gsm_status))
+        QtTest.QTest.qWait(100)
+
+    def update_port(self, slot_name):
+        self.usb_port.setText(str(slot_name))
         QtTest.QTest.qWait(100)
                         
 class Ui_MainWindow(QMainWindow):
@@ -155,9 +150,9 @@ class Ui_MainWindow(QMainWindow):
         self.select_version = QtWidgets.QComboBox(self.tab)
         self.select_version.setGeometry(QtCore.QRect(160, 10, 161, 31))
         self.select_version.setObjectName("select_version")
-        self.select_version.addItem("")
-        self.select_version.addItem("")
-        self.select_version.addItem("")
+        self.select_version.addItem("Program 1")
+        self.select_version.addItem("Program 2")
+        self.select_version.addItem("Program 3")
         self.version = QtWidgets.QLabel(self.tab)
         self.version.setGeometry(QtCore.QRect(10, 20, 151, 20))
         self.version.setObjectName("version")
@@ -178,9 +173,6 @@ class Ui_MainWindow(QMainWindow):
         self.gridLayout_5.setObjectName("gridLayout_5")
         
         comports = usb.detect_ports("ttyCH")
-        if not comports:
-            comports = ["1", "2", "3", "4",
-                        "5", "6", "7", "8"]
         
         esp_com = ["/dev/ttyUSB0", "/dev/ttyUSB1",
                    "/dev/ttyUSB2", "/dev/ttyUSB3",
@@ -191,13 +183,19 @@ class Ui_MainWindow(QMainWindow):
                      [0, 2, 1, 1], [0, 3, 1, 1],
                      [1, 0, 1, 1], [1, 1, 1, 1],
                      [1, 2, 1, 1], [1, 3, 1, 1]]
+
+        # slots_name = ["Slot 1", "Slot 2",
+        #               "Slot 3", "Slot 4",
+        #               "Slot 5", "Slot 6", 
+        #               "Slot 7", "Slot 8"] 
         
         for id_dev in range(0,8):
             if comports[id_dev]:
-                self.dev = DeviceStatus(esp_com[id_dev], comports[id_dev], id_dev)
+                self.dev = DeviceStatus(id_dev, esp_com[id_dev], comports[id_dev], id_dev)
                 # self.dev.setStyleSheet("border: 1px solid black;")
             else:
-                self.dev = DeviceStatus(port_id = id_dev)
+                self.dev = DeviceStatus(id_dev, port_id = id_dev)
+            
             self.gridLayout_5.addWidget(self.dev, grid_list[id_dev][0], grid_list[id_dev][1], grid_list[id_dev][2], grid_list[id_dev][3])
             
         '''for id_dev in range(0,8):
