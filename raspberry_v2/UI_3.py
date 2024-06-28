@@ -61,18 +61,24 @@ class DeviceStatus(QtWidgets.QWidget):
         global esp
         global gsm
 
-        self.widget = QtWidgets.QWidget()
-        self.widget.setGeometry(QtCore.QRect(270, 240, 131, 101))
-        self.widget.setStyleSheet("border: 1px solid black;")
         
         super().__init__()
+        self.frame = QtWidgets.QFrame(self)
+        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame.setGeometry(0, 15, 230, 280)
+        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.layout = QtWidgets.QGridLayout()
         self.setLayout(self.layout)
+        # self.verticalLayout = QtWidgets.QVBoxLayout(self.frame)
         
         self.label_arm = QtWidgets.QLabel("AVR: ")
+        self.label_arm = QtWidgets.QLabel(self.frame)
         self.label_esp = QtWidgets.QLabel("ESP: ")
+        self.label_esp = QtWidgets.QLabel(self.frame)
         self.label_gsm = QtWidgets.QLabel("GSM: ")
+        self.label_gsm = QtWidgets.QLabel(self.frame)
         self.usb_port  = QtWidgets.QLabel("")
+        self.usb_port = QtWidgets.QLabel(self.frame)
         
         self.port = port_id
         
@@ -96,18 +102,10 @@ class DeviceStatus(QtWidgets.QWidget):
             self.label_gsm.setText("GSM: None")
         else:
             self.usb_port.setText(str(port_num))
-            
-        '''device_timer = QTimer(self)
-        device_timer.timeout.connect(self.update_labels)
-        device_timer.start(100)'''
         
         avr = port_id
         esp = esp_com
         gsm = port_num
-        
-        '''self.port_name = port_num
-        self.esp       = esp_com
-        self.id        = port_id'''
         
         t1 = Thread (target = self.worker_thread.wait_imei, args = (port_num, ))
         t1.deamon = True
@@ -121,10 +119,6 @@ class DeviceStatus(QtWidgets.QWidget):
         t3.deamon = True
         t3.start()
         
-        '''t1 = Thread (target = self.worker_thread.start_timer, args = ( ))
-        t1.deamon = True
-        t1.start()'''
-        
     def update_avr(self, avr_status):
         self.label_arm.setText("AVR: " + avr_status)
         QtTest.QTest.qWait(100)
@@ -136,17 +130,7 @@ class DeviceStatus(QtWidgets.QWidget):
     def update_gsm(self, gsm_status):
         self.label_gsm.setText("GSM: " + str(gsm_status))
         QtTest.QTest.qWait(100)
-        
-    '''def update_labels(self):
-        global avr
-        global esp
-        global gsm
-        self.worker_thread.wait_imei(gsm)
-        self.worker_thread.wait_esp(esp)
-        self.worker_thread.wait_avr(avr)
-        print ("timer woking!!!!!!!!")'''
                         
-    
 class Ui_MainWindow(QMainWindow):
         
     can_ = CAN.CAN_communicate()
@@ -158,7 +142,7 @@ class Ui_MainWindow(QMainWindow):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.Devices = QtWidgets.QTabWidget(self.centralwidget)
-        self.Devices.setGeometry(QtCore.QRect(10, 10, 1160, 780))
+        self.Devices.setGeometry(QtCore.QRect(10, 10, 1160, 800))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.Devices.setFont(font)
@@ -211,7 +195,7 @@ class Ui_MainWindow(QMainWindow):
         for id_dev in range(0,8):
             if comports[id_dev]:
                 self.dev = DeviceStatus(esp_com[id_dev], comports[id_dev], id_dev)
-                self.dev.setStyleSheet("border: 1px solid black;")
+                # self.dev.setStyleSheet("border: 1px solid black;")
             else:
                 self.dev = DeviceStatus(port_id = id_dev)
             self.gridLayout_5.addWidget(self.dev, grid_list[id_dev][0], grid_list[id_dev][1], grid_list[id_dev][2], grid_list[id_dev][3])
